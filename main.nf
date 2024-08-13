@@ -1,10 +1,10 @@
 nextflow.preview.output = true
 nextflow.preview.topic  = true
 
-include { CHIPSEQ } from './workflows/chipseq'
+include { ATACSEQ } from './workflows/atacseq'
 
 workflow {
-	CHIPSEQ()
+	ATACSEQ()
 }
 
 output {
