@@ -322,17 +322,17 @@
             "properties": {
                 "ucsc_trackhub_shortlabel": {
                     "type": "string",
-                    "default": "ChIP-seq",
+                    "default": "ATAC-seq",
                     "description": "Short label for the UCSC trackhub."
                 },
                 "ucsc_trackhub_longlabel": {
                     "type": "string",
-                    "default": "ChIP-seq data",
+                    "default": "ATAC-seq data",
                     "description": "Long label for the UCSC trackhub."
                 },
                 "ucsc_trackhub_hub": {
                     "type": "string",
-                    "default": "ChIPTrackHub",
+                    "default": "ATACTrackHub",
                     "description": "Hub string to use for UCSC trackhub.",
                     "pattern": "^[a-zA-Z0-9]+$"
                 },
