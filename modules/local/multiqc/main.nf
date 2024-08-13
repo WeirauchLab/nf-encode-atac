@@ -13,6 +13,7 @@ process MULTIQC {
     path "data/bowtie2_align/*"
     path "data/samtools_flagstat/filtered/*"
     path "data/picard_markduplicates/*"
+    path "data/picard_collectinsertsizemetrics/*"
     path "data/sambamba_markdup/*"
     path "data/lib_qc/*"
     path "data/spp/*"

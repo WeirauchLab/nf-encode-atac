@@ -162,6 +162,11 @@
                         "picard"
                     ],
                     "description": "Method to use for marking duplicates."
+                },
+                "skip_collectinsertsizemetrics": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Disables Picard's CollectInsertSizeMetrics. This calculates the insert size distribution."
                 }
             }
         },
