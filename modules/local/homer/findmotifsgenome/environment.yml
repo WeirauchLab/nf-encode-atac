@@ -1,0 +1,7 @@
+name: homer_findmotifsgenome
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - homer=4.9.1=pl5.22.0_5

@@ -1,0 +1,6 @@
+name: bowtie2_build
+channels:
+  - bioconda
+  - defaults
+dependencies:
+  - bioconda::bowtie2
