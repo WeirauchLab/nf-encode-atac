@@ -48,6 +48,8 @@ extra_fn_clean_exts:
   - ".lowq_filt"
   - "_fingerprint"
   - "_fingerprint.tab"
+  - ".no_dup"
+  - ".insertsizes"
 
 sp:
   sourmash/gather:
@@ -216,3 +218,6 @@ table_cond_formatting_rules:
       - gt: 50
     fail:
       - gt: 70
+
+picard_config:
+  s_name_filenames: true

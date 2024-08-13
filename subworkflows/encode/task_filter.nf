@@ -1,18 +1,20 @@
-include { RM_LOWQ_READS          } from '../../modules/encode/rm_lowq_reads/main'
-include { PICARD_MARKDUPLICATES  } from '../../modules/local/picard/markDuplicates/main'
-include { SAMBAMBA_MARKDUP       } from '../../modules/local/sambamba/markdup/main'
-include { RM_DUPLICATES          } from '../../modules/encode/rm_dup/main'
-include { SAMTOOLS_INDEX         } from "../../modules/local/samtools/index/main"
-include { SAMTOOLS_FLAGSTAT      } from "../../modules/local/samtools/flagstats/main"
+include { RM_LOWQ_READS                   } from '../../modules/encode/rm_lowq_reads/main'
+include { PICARD_MARKDUPLICATES           } from '../../modules/local/picard/markDuplicates/main'
+include { PICARD_COLLECTINSERTSIZEMETRICS } from '../../modules/local/picard/CollectInsertSizeMetrics/main'
+include { SAMBAMBA_MARKDUP                } from '../../modules/local/sambamba/markdup/main'
+include { RM_DUPLICATES                   } from '../../modules/encode/rm_dup/main'
+include { SAMTOOLS_INDEX                  } from "../../modules/local/samtools/index/main"
+include { SAMTOOLS_FLAGSTAT               } from "../../modules/local/samtools/flagstats/main"
 
 workflow TASK_FILTER {
 	take:
-	ch_bam              // channel: [ val(meta), path(bam) ]
-	mapq_threshold      // integer or []
-	markdup_method      // "picard" or "sambamba"
-	skip_rm_lowq_reads  // boolean
-	skip_rm_duplicates  // boolean
-	save_filtered_bam   // boolean
+	ch_bam                        // channel: [ val(meta), path(bam) ]
+	mapq_threshold                // integer or []
+	markdup_method                // "picard" or "sambamba"
+	skip_rm_lowq_reads            // boolean
+	skip_rm_duplicates            // boolean
+	save_filtered_bam             // boolean
+	skip_collectinsertsizemetrics // boolean
 
 	main:
 	
@@ -54,24 +56,38 @@ workflow TASK_FILTER {
 		ch_filtered = ch_markdup
 	}
 
+	ch_insertsizes = Channel.empty()
+	ch_insertsizes_histogram = Channel.empty()
+	if(!skip_collectinsertsizemetrics){
+		ch_filtered
+			.filter{meta, bam -> !meta.single_end}
+			| PICARD_COLLECTINSERTSIZEMETRICS
+		ch_insertsizes = PICARD_COLLECTINSERTSIZEMETRICS.out.insertsizes
+		ch_insertsizes_histogram = PICARD_COLLECTINSERTSIZEMETRICS.out.histogram
+	}
+
 	SAMTOOLS_INDEX(ch_filtered)
 	ch_filtered_bai = SAMTOOLS_INDEX.out.bai
 
 	SAMTOOLS_FLAGSTAT(ch_filtered)
 
 	publish:
-	ch_filtered                    >> (save_filtered_bam ? "encode/alignments/filtered" : null)
-	ch_filtered_bai                >> (save_filtered_bam ? "encode/alignments/filtered" : null)
-	ch_picard_metrics              >> "encode/logs/picard_metrics"
-	ch_sambamba_log                >> "encode/logs/sambamba_markdup"
-	SAMTOOLS_FLAGSTAT.out.flagstat >> "encode/alignments/flagstats/filtered"
+	ch_filtered                                     >> (save_filtered_bam ? "encode/alignments/filtered" : null)
+	ch_filtered_bai                                 >> (save_filtered_bam ? "encode/alignments/filtered" : null)
+	ch_picard_metrics                               >> "encode/logs/picard_metrics"
+	ch_insertsizes                                  >> "encode/picard"
+	ch_insertsizes_histogram                        >> "encode/picard"
+	ch_sambamba_log                                 >> "encode/logs/sambamba_markdup"
+	SAMTOOLS_FLAGSTAT.out.flagstat                  >> "encode/alignments/flagstats/filtered"
 
 	emit:
-	bam            = ch_filtered
-	bai            = ch_filtered_bai
-	picard_metrics = ch_picard_metrics
-	sambamba_log   = ch_sambamba_log
-	flagstat       = SAMTOOLS_FLAGSTAT.out.flagstat
-	markdup_bam	   = ch_markdup
+	bam              = ch_filtered
+	bai              = ch_filtered_bai
+	picard_metrics   = ch_picard_metrics
+	sambamba_log     = ch_sambamba_log
+	flagstat         = SAMTOOLS_FLAGSTAT.out.flagstat
+	markdup_bam      = ch_markdup
+	insertsizes      = ch_insertsizes
+	insert_histogram = ch_insertsizes_histogram
 
 }

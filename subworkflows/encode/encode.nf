@@ -43,6 +43,7 @@ workflow ENCODE {
 	save_tagalign
 	max_peaks
 	markdup_method
+	skip_collectinsertsizemetrics
 
 	main:
 
@@ -63,7 +64,8 @@ workflow ENCODE {
 		markdup_method,
 		skip_low_mapq_filter,
 		skip_rm_duplicates,
-		save_filtered_bam
+		save_filtered_bam,
+		skip_collectinsertsizemetrics
 	)
 	ch_filtered_bam = TASK_FILTER.out.bam
 	ch_filtered_bam_bai = TASK_FILTER.out.bam.join(TASK_FILTER.out.bai, by: 0)
@@ -153,6 +155,7 @@ workflow ENCODE {
 	bam_filtered               = TASK_FILTER.out.bam
 	bam_filtered_index         = TASK_FILTER.out.bai
 	picard_metrics             = TASK_FILTER.out.picard_metrics
+	insertsizes                = TASK_FILTER.out.insertsizes
 	sambamba_log               = TASK_FILTER.out.sambamba_log
 	filtered_flagstat          = TASK_FILTER.out.flagstat
 	spp                        = TASK_XCORR.out.spp
