@@ -1,0 +1,7 @@
+name: homer_postproc_findmotifsgenome
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - conda-forge::r-tidyverse=2.0.0
+  - conda-forge::r-argparse=2.2.3

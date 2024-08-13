@@ -1,0 +1,218 @@
+report_section_order:
+  fastp:
+    order: 1000
+  bowtie2:
+    order: 990
+  picard:
+    order: 980
+  samtools:
+    order: 972
+  encode_lib_qc:
+    order: 971
+  spp_xcorr:
+    order: 970
+  deepTools:
+    order: 960
+  encode_reproducibility:
+    order: 950
+  homer_findmotifsgenome:
+    order: 890
+  kraken:
+    order: 790
+  sourmash:
+    order: 780
+  fastqc_raw:
+    order: 90
+  fastqc_trimmed:
+    order: 80
+  multiqc_software_versions:
+    order: 1
+
+module_order:
+  - fastqc:
+      name: "FastQC (raw)"
+      info: "This section of the report shows FastQC results before adapter trimming."
+      anchor: "fastqc_raw"
+      path_filters:
+        - "data/fastqc/raw/*.zip"
+  - fastqc:
+      name: "FastQC (trimmed)"
+      info: "This section of the report shows FastQC results after adapter trimming."
+      anchor: "fastqc_trimmed"
+      path_filters:
+        - "data/fastqc/trimmed/*.zip"
+
+
+extra_fn_clean_exts:
+  - "_matches"
+  - ".lowq_filt"
+  - "_fingerprint"
+  - "_fingerprint.tab"
+
+sp:
+  sourmash/gather:
+    fn: "*_matches.csv"
+
+table_cond_formatting_rules:
+  mqc_generalstats_bowtie_2_hisat2_overall_alignment_rate:
+    pass:
+      - gt: 80
+      - eq: 80
+    warn:
+      - lt: 80
+    fail:
+      - lt: 60
+  mqc_generalstats_fastp_after_filtering_gc_content:
+    pass:
+      - lt: 60
+      - eq: 60
+    warn:
+      - gt: 60
+      - lt: 40
+    fail:
+      - gt: 70
+      - lt: 30
+  mqc_generalstats_fastp_after_filtering_q30_bases:
+    pass:
+      - gt: 80
+      - eq: 80
+    warn:
+      - lt: 80
+    fail:
+      - lt: 70
+  mqc_generalstats_fastp_after_filtering_q30_rate:
+    pass:
+      - gt: 90
+    warn:
+      - lt: 90
+    fail:
+      - lt: 80
+  mqc_generalstats_fastp_filtering_result_passed_filter_reads:
+    pass:
+      - gt: 30000000
+      - eq: 30000000
+    warn:
+      - lt: 30000000
+    fail:
+      - lt: 10000000
+  mqc_generalstats_fastp_pct_duplication:
+    pass:
+      - lt: 50
+      - eq: 50
+    warn:
+      - gt: 50
+    fail:
+      - gt: 70
+  mqc_generalstats_fastp_pct_surviving:
+    pass:
+      - gt: 90
+      - eq: 90
+    warn:
+      - lt: 90
+    fail:
+      - lt: 80
+  mqc_generalstats_fastqc_raw_percent_duplicates:
+    pass:
+      - lt: 50
+      - eq: 50
+    warn:
+      - gt: 50
+    fail:
+      - gt: 70
+  mqc_generalstats_fastqc_raw_percent_fails:
+    pass:
+      - lt: 10
+      - eq: 10
+    warn:
+      - gt: 10
+    fail:
+      - gt: 20
+  mqc_generalstats_fastqc_raw_percent_gc:
+    pass:
+      - gt: 40
+      - eq: 40
+      - lt: 60
+      - eq: 60
+    warn:
+      - lt: 40
+      - gt: 60
+    fail:
+      - lt: 30
+      - gt: 70
+  mqc_generalstats_fastqc_raw_total_sequences:
+    pass:
+      - gt: 30000000
+      - eq: 30000000
+    warn:
+      - lt: 30000000
+    fail:
+      - lt: 10000000
+  mqc_generalstats_fastqc_trimmed_percent_duplicates:
+    pass:
+      - lt: 50
+      - eq: 50
+    warn:
+      - gt: 50
+    fail:
+      - gt: 70
+  mqc_generalstats_fastqc_trimmed_percent_fails:
+    pass:
+      - lt: 10
+      - eq: 10
+    warn:
+      - gt: 10
+    fail:
+      - gt: 20
+  mqc_generalstats_fastqc_trimmed_percent_gc:
+    pass:
+      - gt: 40
+      - eq: 40
+      - lt: 60
+      - eq: 60
+    warn:
+      - lt: 40
+      - gt: 60
+    fail:
+      - lt: 30
+      - gt: 70
+  mqc_generalstats_fastqc_trimmed_total_sequences:
+    pass:
+      - gt: 30000000
+      - eq: 30000000
+    warn:
+      - lt: 30000000
+    fail:
+      - lt: 10000000
+  mqc_generalstats_phantompeakqualtools_Estimated_Fragment_Length_bp:
+    pass:
+      - gt: 99
+    warn:
+      - lt: 100
+      - gt: 800
+    fail:
+      - lt: 50
+      - gt: 1200
+  mqc_generalstats_phantompeakqualtools_NSC:
+    pass:
+      - gt: 1.1
+      - eq: 1.1
+    warn:
+      - lt: 1.1
+    fail:
+      - lt: 1.05
+  mqc_generalstats_phantompeakqualtools_RSC:
+    pass:
+      - gt: 1
+      - eq: 1
+    warn:
+      - lt: 1
+    fail:
+      - lt: 0.8
+  mqc_generalstats_picard_mark_duplicates_PERCENT_DUPLICATION:
+    pass:
+      - lt: 50
+      - eq: 50
+    warn:
+      - gt: 50
+    fail:
+      - gt: 70

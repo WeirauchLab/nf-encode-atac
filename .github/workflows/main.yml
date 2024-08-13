@@ -1,0 +1,48 @@
+name: Nextflow pytest-workflow
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+  pull_request:
+    branches:
+      - dev
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        profile: [docker]
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Nextflow
+        uses: actions/setup-java@v2
+        with:
+          distribution: "adopt"
+          java-version: "11"
+
+      - name: Setup Nextflow latest-edge
+        run: |
+          curl -s https://get.nextflow.io | bash
+          chmod +x nextflow
+          sudo mv nextflow /usr/local/bin/
+
+      - name: Install nf-test
+        run: |
+          curl -fsSL https://get.nf-test.com | bash
+          sudo mv nf-test /usr/local/bin/
+          nf-test version
+
+      - name: Run tests
+        run: |
+          nf-test test \
+          --profile ${{matrix.profile}} \
+          --verbose \
+          --shard ${{ matrix.shard }}/${{ strategy.job-total }}

@@ -1,0 +1,66 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/nf-core/rnaseq/master/assets/schema_input.json",
+	"title": "nf-core/rnaseq pipeline - params.input schema",
+	"description": "Schema for the file provided with params.input",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"id": {
+				"type": "string",
+				"pattern": "^\\S+$",
+				"errorMessage": "Sample name must be provided and cannot contain spaces",
+				"meta": [
+					"id",
+					"sample_id"
+				]
+			},
+			"control_id": {
+				"type": "string",
+				"pattern": "^\\S+$",
+				"errorMessage": "Sample name must be provided and cannot contain spaces",
+				"meta": [
+					"control_id"
+				]
+			},
+			"group": {
+				"type": "string",
+				"pattern": "^\\S+$",
+				"errorMessage": "Sample name must be provided and cannot contain spaces",
+				"meta": [
+					"group"
+				]
+			},
+			"chip_mode": {
+				"type": "string",
+				"default": "tf",
+				"errorMessage": "Must be one of the following: 'tf', 'histone'",
+				"meta": [
+					"chip_mode"
+				],
+				"enum": [
+					"tf",
+					"histone"
+				]
+			},
+			"fastq_1": {
+				"type": "string",
+				"pattern": "^\\S+\\.f(ast)?q\\.gz$",
+				"format": "file-path",
+				"exists": true,
+				"errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+			},
+			"fastq_2": {
+				"errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
+				"type": "string",
+				"pattern": "^\\S+\\.f(ast)?q\\.gz$",
+				"format": "file-path"
+			}
+		},
+		"required": [
+			"id",
+			"fastq_1"
+		]
+	}
+}
