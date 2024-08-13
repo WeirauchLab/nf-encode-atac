@@ -1,6 +1,6 @@
-# NF-ENCODE-CHIP Quickstart
+# NF-ENCODE-ATAC Quickstart
 
-This pipeline is designed to process ChIP-seq data. The pipeline takes raw fastq files as input and generates several different files as output. The pipeline performs several different steps. The main steps are:
+This pipeline is designed to process ATAC-seq data. The pipeline takes raw fastq files as input and generates several different files as output. The pipeline performs several different steps. The main steps are:
 
 ## Requirements
 
@@ -21,7 +21,7 @@ The pipeline can be installed using the following command:
 
 ```bash
 
-nextflow pull cchmc/nf-encode-chip
+nextflow pull cchmc/nf-encode-atac
 
 ```
 
@@ -29,7 +29,7 @@ If that fails, you can manually install the pipeline by cloning the repository:
 
 ```bash
 
-git clone cchmc/nf-encode-chip
+git clone cchmc/nf-encode-atac
 
 ```
 
@@ -88,7 +88,7 @@ After setting up a samplesheet and parameters file, the pipeline can be run with
 
 ```bash
 
-nextflow run cchmc/nf-encode-chip ...
+nextflow run cchmc/nf-encode-atac ...
 
 ```
 
@@ -98,7 +98,7 @@ If you don't want to use a parameters file, you can specify parameters at runtim
 
 ```bash
 
-nextflow run cchmc/nf-encode-chip --input samplesheet.csv --outdir results --fasta /path/to/genome.fa
+nextflow run cchmc/nf-encode-atac --input samplesheet.csv --outdir results --fasta /path/to/genome.fa
 
 ```
 
@@ -118,6 +118,6 @@ Then run the pipeline with the parameters file:
 
 ```bash
 
-nextflow run cchmc/nf-encode-chip -params-file params.json
+nextflow run cchmc/nf-encode-atac -params-file params.json
 
 ```

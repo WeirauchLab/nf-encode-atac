@@ -1,16 +1,16 @@
-# NF-ENCODE-CHIP
+# NF-ENCODE-ATAC
 
-This is a nextflow-based pipeline designed to process ChIP-seq data based on
-the ENCODE's ChIP-seq pipeline. It attempts to replicate the commands
+This is a nextflow-based pipeline designed to process ATAC-seq data based on
+the ENCODE's ATAC-seq pipeline. It attempts to replicate the commands
 that would normally be processed by ENCODE, but in a Nextflow-native format.
 
 Please see the later section for more details.
 
 ## Citation / Credits
 
-Please be sure you cite ENCODE's ChIP-seq pipeline if you use this pipeline:
+Please be sure you cite ENCODE's ATAC-seq pipeline if you use this pipeline:
 
-- [ENCODE-DCC/chip-seq-pipeline2:2.0.0](https://github.com/ENCODE-DCC/chip-seq-pipeline2/tree/v2.0.0)
+- [ENCODE-DCC/atac-seq-pipeline:2.0.0](https://github.com/ENCODE-DCC/atac-seq-pipeline/tree/v2.0.0)
 
 ## Quick Start
 
@@ -32,13 +32,13 @@ Additionally, it is HIGHLY recommended that you have one of:
 The pipeline can be installed using the following command:
 
 ```bash
-nextflow pull cchmc/nf-encode-chip
+nextflow pull cchmc/nf-encode-atac
 ```
 
 If that fails, you can manually install the pipeline by cloning the repository:
 
 ```bash
-git clone cchmc/nf-encode-chip
+git clone cchmc/nf-encode-atac
 ```
 
 ### Prepare samplesheet
@@ -53,17 +53,16 @@ The samplesheet is a CSV file that contains the following columns:
 | id         | Yes      |         | The sample ID                                                    |
 | group      | Yes      |         | A group name. Anything matching this gets treated as a replicate |
 | control_id | No       |         | The ID of the control group                                      |
-| chip_mode  | No       | tf      | One of: "tf", "histone"                                          |
 | fastq_1    | Yes      |         | The path to the first fastq file                                 |
 | fastq_2    | No       |         | The path to the second fastq file                                |
 
 An example samplesheet is shown below:
 
 ```csv
-id,group,chip_mode,fastq_1,fastq_2
-example1,example,tf,/path/to/example1_R1.fastq.gz,/path/to/example1_R2.fastq.gz
-example2,example,tf,/path/to/example2_R1_1.fastq.gz,/path/to/example2_R2_1.fastq.gz
-example2,example,tf,/path/to/example2_R1_2.fastq.gz,/path/to/example2_R2_2.fastq.gz
+id,group,fastq_1,fastq_2
+example1,example,/path/to/example1_R1.fastq.gz,/path/to/example1_R2.fastq.gz
+example2,example,/path/to/example2_R1_1.fastq.gz,/path/to/example2_R2_1.fastq.gz
+example2,example,/path/to/example2_R1_2.fastq.gz,/path/to/example2_R2_2.fastq.gz
 ```
 
 If the fastq files for a sample are split across multiple files, you can specify
@@ -105,10 +104,10 @@ To run the pipeline, you can use the following command:
 
 ```bash
 # Basic command
-nextflow run cchmc/nf-encode-chip -params-file params.json
+nextflow run cchmc/nf-encode-atac -params-file params.json
 
 # Use profiles to specify execution profiles. Here, docker is used.
-nextflow run cchmc/nf-encode-chip -profile docker -params-file params.json
+nextflow run cchmc/nf-encode-atac -profile docker -params-file params.json
 ```
 
 If all goes well, you should see the pipeline start processing your data.
@@ -119,7 +118,7 @@ require that the `workDir` directory is still present.
 
 ### From ENCODE's WDL to Nextflow
 
-This pipeline is specifically based on [ENCODE-DCC/chip-seq-pipeline2:2.0.0](https://github.com/ENCODE-DCC/chip-seq-pipeline2/tree/v2.0.0).
+This pipeline is specifically based on [ENCODE-DCC/atac-seq-pipeline:2.0.0](https://github.com/ENCODE-DCC/atac-seq-pipeline/tree/v2.0.0).
 The pipeline is designed to replicate the commands that would normally be processed by ENCODE, but in a Nextflow-native format.
 This was done by looking through the repository, dissecting the commands, and converting them to Nextflow processes.
 Several steps were validated by looking at the scripts run by Cromwell.

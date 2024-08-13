@@ -17,7 +17,7 @@ def subset_peak_meta(peak_channel, meta_keys){
 	peak_channel.map{meta, peak -> [meta.subMap(meta_keys), peak]}
 }
 
-workflow ENCODE_CHIP {
+workflow ENCODE {
 	take:
 	ch_fastq
 	ch_fasta
