@@ -1,4 +1,4 @@
-# NF-ENCODE-CHIP Outputs
+# NF-ENCODE-ATAC Outputs
 
 This pipeline generates several different files as output.
 
