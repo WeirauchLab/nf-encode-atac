@@ -78,7 +78,8 @@ workflow ATACSEQ {
 		params.skip_pseudoreplication,
 		params.save_tagalign,
 		params.encode_max_macs2_peaks,
-		params.markdup_method
+		params.markdup_method,
+		params.skip_collectinsertsizemetrics
 	)
 
 	DEEPTOOLS(
@@ -142,6 +143,7 @@ workflow ATACSEQ {
 		ENCODE.out.bowtie2_log.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.filtered_flagstat.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.picard_metrics.collect{it[1]}.ifEmpty{[]},
+		ENCODE.out.insertsizes.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.sambamba_log.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.lib_qc.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.spp.collect{it[1]}.ifEmpty{[]},
