@@ -15,23 +15,7 @@ workflow TASK_MACS2 {
 	ch_pval_bigwig = Channel.empty()
 
 	ch_tagalign
-		.collect{meta, ta -> [ [meta.id,ta] ]}
-		.set{list_tagalign}
-	// This tries to match the control tagAlign file with the treatment tagAlign file
-	// TODO: Make this use the pooled control tagAlign file
-	ch_tagalign
-		.map{meta, ta -> 
-			def new_meta = meta.clone()
-			new_meta.tagalign_id = new_meta.id
-			if(new_meta.control_id){
-				def control_entry = list_tagalign.findAll{it[0].id == new_meta.control_id}
-				if(control_entry) {
-					[new_meta, ta, control_entry[1]]
-				}
-				} else {
-					[new_meta, ta, []]
-				}
-			}
+		.map{meta, ta -> [meta, ta, []]}
 		.set {ch_macs2_input}
 	
 	MACS2_CALLPEAK(

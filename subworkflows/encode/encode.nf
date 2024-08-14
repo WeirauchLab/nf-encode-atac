@@ -65,7 +65,8 @@ workflow ENCODE {
 		skip_low_mapq_filter,
 		skip_rm_duplicates,
 		save_filtered_bam,
-		skip_collectinsertsizemetrics
+		skip_collectinsertsizemetrics,
+		ch_mito_chr_name
 	)
 	ch_filtered_bam = TASK_FILTER.out.bam
 	ch_filtered_bam_bai = TASK_FILTER.out.bam.join(TASK_FILTER.out.bai, by: 0)
@@ -173,4 +174,6 @@ workflow ENCODE {
 	overlap_reproducible_peaks = TASK_REPRODUCIBILITY.out.overlap_reproducible_peaks
 	lib_qc                     = LIB_QC.out.tsv
 	peakstats                  = CALC_PEAKSTATS.out.peakstats
+	mtnuc_json                 = TASK_FILTER.out.mtnuc_json
+	mtnuc_ratio                = TASK_FILTER.out.mtnuc_ratio
 }

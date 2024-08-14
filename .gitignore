@@ -3,3 +3,5 @@ test_results/
 .nextflow*
 __pycache__
 .nf-test*
+atac_scripts.sh
+filtered_atac_scripts.sh

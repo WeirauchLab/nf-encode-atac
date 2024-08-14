@@ -12,8 +12,8 @@ process MTNUCRATIO_MTNUCRATIO {
 	val chrM
 
 	output:
-	tuple val(meta), path("*.json")      , optional: false, emit: json, topic: mtnucratio_json
-	tuple val(meta), path("*.mtnucratio"), optional: false, emit: mtnucratio
+	tuple val(meta), path("*.json")      , optional: true, emit: json, topic: mtnucratio_json
+	tuple val(meta), path("*.mtnucratio"), optional: true, emit: mtnucratio
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"
