@@ -9,7 +9,7 @@ workflow TASK_XCORR {
 	main:
 
 	RUN_SPP(
-		ch_tagalign.map{meta, tagalign -> [meta, tagalign, meta.chip_mode]},
+		ch_tagalign,
 		ch_mito_chr
 	)
 	EXTRACT_XCOR(RUN_SPP.out.rdata)

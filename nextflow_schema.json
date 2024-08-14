@@ -167,6 +167,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Disables Picard's CollectInsertSizeMetrics. This calculates the insert size distribution."
+                },
+                "enable_tn5_shift_tagalign": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Shifts alignments by +4 / -5 when converting to tagAlign."
                 }
             }
         },
@@ -182,15 +187,16 @@
                     ],
                     "description": "Size of the mappable genome to use for MACS2. Can be a string (hs, mm) or int"
                 },
-                "encode_macs2_pthresh": {
-                    "type": "number",
-                    "default": 0.01,
-                    "description": "Initial p-value to use for thresholding in MACS2 (ENCODE)."
-                },
                 "encode_macs2_ext_args": {
                     "type": "string",
-                    "default": "-f BED -p 0.01 --nomodel --shift 0 --keep-dup all -B --SPMR",
+                    "default": "-f BED -p 0.01 --nomodel --keep-dup all -B --SPMR",
                     "description": "Arguments passed to MACS2 by ENCODE when calling peaks. Fragment length is automatically calculated."
+                },
+                "encode_macs2_ext_size": {
+                    "type": "integer",
+                    "default": 150,
+                    "description": "Extension size to use for macs2. If null or 0, will not be used.",
+                    "help_text": "This sets 2 flags; --extsize and --shift. --shift will be equal to the -(extsize/2), rounded as an integer."
                 },
                 "skip_peak_filtering": {
                     "type": "boolean",
@@ -204,7 +210,7 @@
                 },
                 "encode_max_macs2_peaks": {
                     "type": "integer",
-                    "default": 500000,
+                    "default": 300000,
                     "description": "Maximum number of peaks to keep after calling peaks.",
                     "help_text": "Setting this to 0 will disable this cutoff."
                 }

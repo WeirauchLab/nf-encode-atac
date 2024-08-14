@@ -5,6 +5,7 @@ include { SAMBAMBA_MARKDUP                } from '../../modules/local/sambamba/m
 include { RM_DUPLICATES                   } from '../../modules/encode/rm_dup/main'
 include { SAMTOOLS_INDEX                  } from "../../modules/local/samtools/index/main"
 include { SAMTOOLS_FLAGSTAT               } from "../../modules/local/samtools/flagstats/main"
+include { MTNUCRATIO_MTNUCRATIO           } from "../../modules/local/mtnucratio/mtnucratio/main"
 
 workflow TASK_FILTER {
 	take:
@@ -15,6 +16,7 @@ workflow TASK_FILTER {
 	skip_rm_duplicates            // boolean
 	save_filtered_bam             // boolean
 	skip_collectinsertsizemetrics // boolean
+	ch_mito_chr_name              // string
 
 	main:
 	
@@ -66,6 +68,14 @@ workflow TASK_FILTER {
 		ch_insertsizes_histogram = PICARD_COLLECTINSERTSIZEMETRICS.out.histogram
 	}
 
+	ch_mtnuc_json = Channel.empty()
+	ch_mtnuc_ratio = Channel.empty()
+	if(ch_mito_chr_name){
+		MTNUCRATIO_MTNUCRATIO(ch_filtered, ch_mito_chr_name)
+		ch_mtnuc_json  = MTNUCRATIO_MTNUCRATIO.out.json
+		ch_mtnuc_ratio = MTNUCRATIO_MTNUCRATIO.out.mtnucratio
+	}
+
 	SAMTOOLS_INDEX(ch_filtered)
 	ch_filtered_bai = SAMTOOLS_INDEX.out.bai
 
@@ -77,6 +87,8 @@ workflow TASK_FILTER {
 	ch_picard_metrics                               >> "encode/logs/picard_metrics"
 	ch_insertsizes                                  >> "encode/picard"
 	ch_insertsizes_histogram                        >> "encode/picard"
+	ch_mtnuc_json                                   >> "encode/mtnucratio"
+	ch_mtnuc_ratio                                  >> "encode/mtnucratio"
 	ch_sambamba_log                                 >> "encode/logs/sambamba_markdup"
 	SAMTOOLS_FLAGSTAT.out.flagstat                  >> "encode/alignments/flagstats/filtered"
 
@@ -89,5 +101,7 @@ workflow TASK_FILTER {
 	markdup_bam      = ch_markdup
 	insertsizes      = ch_insertsizes
 	insert_histogram = ch_insertsizes_histogram
+	mtnuc_json       = ch_mtnuc_json
+	mtnuc_ratio      = ch_mtnuc_ratio
 
 }

@@ -144,6 +144,7 @@ workflow ATACSEQ {
 		ENCODE.out.filtered_flagstat.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.picard_metrics.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.insertsizes.collect{it[1]}.ifEmpty{[]},
+		ENCODE.out.mtnuc_json.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.sambamba_log.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.lib_qc.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.spp.collect{it[1]}.ifEmpty{[]},
