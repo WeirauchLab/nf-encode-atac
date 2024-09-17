@@ -1,0 +1,3 @@
+id,replicate,group,fastq_1,fastq_2
+sample1,1,MYC_CONTROL,https://storage.googleapis.com/encode-pipeline-test-samples/encode-chip-seq-pipeline/ENCSR000DYI/fastq_subsampled/rep1.subsampled.25.fastq.gz,
+sample2,2,MYC_CONTROL,https://storage.googleapis.com/encode-pipeline-test-samples/encode-chip-seq-pipeline/ENCSR000DYI/fastq_subsampled/rep2.subsampled.20.fastq.gz,

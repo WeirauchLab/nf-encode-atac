@@ -1,0 +1,4 @@
+id,group,chip_mode,control_id,chr,start,end,type,single_end,file_path
+ENCFF313NRK_CTCF_SUBSET,CTCF,tf,,chr19,10000000,12000000,bam,true,https://www.encodeproject.org/files/ENCFF313NRK/@@download/ENCFF313NRK.bam
+ENCFF834CAH_CTCF_SUBSET,CTCF,tf,,chr19,10000000,12000000,bam,true,https://www.encodeproject.org/files/ENCFF834CAH/@@download/ENCFF834CAH.bam
+GRCh38_CHR19_SUBSET,CTCF,,,chr19,10000000,12000000,fasta,,https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr19.fa.gz

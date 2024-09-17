@@ -1,0 +1,7 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- bioconda::bedtools=2.31.1
+- bioconda::bionumpy=1.0.9
+- bioconda::idr=2.0.4.2

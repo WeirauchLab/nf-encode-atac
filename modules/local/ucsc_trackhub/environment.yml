@@ -1,0 +1,6 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- conda-forge::pydantic=2.7.1
+- conda-forge::python=3.12.3

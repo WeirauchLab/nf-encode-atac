@@ -1,0 +1,260 @@
+title: "ChIP-seq Analysis Report"
+intro_text: "This pipeline is based off the steps in ENCODE's ChIP-seq pipeline (v2.0.0). Minor modifications have been made."
+
+report_header_info:
+  - Contact E-mail: "NA"
+  - Application Type: "ChIP-seq"
+  - Project Type: "NA"
+
+show_analysis_paths: False
+show_analysis_time: False
+disable_version_detection: True
+
+show_hide_buttons:
+  - Replicates
+  - Pseudoreplicates
+  - Pooled Samples
+show_hide_mode:
+  - hide
+  - show
+  - show
+show_hide_patterns:
+  - ["_sample","_pr1","pr2"]
+  - ["_pr1","pr2"]
+  - ["_sample"]
+
+table_columns_placement:
+  FastQC (raw):
+    total_sequences: 1
+
+table_columns_visible:
+  fastp:
+    pct_duplication: False
+  FastQC (raw): False
+  FastQC (trimmed): False
+  homer_findmotifsgenome_table:
+    "p_value": False
+    "log_p_value": False
+    "rank": False
+
+report_section_order:
+  fastp:
+    order: 1000
+  bowtie2:
+    order: 990
+  picard:
+    order: 980
+  samtools:
+    order: 972
+  encode_lib_qc:
+    order: 971
+  spp_xcorr:
+    order: 970
+  deepTools:
+    order: 960
+  encode_reproducibility:
+    order: 950
+  homer_findmotifsgenome:
+    order: 890
+  kraken:
+    order: 790
+  sourmash:
+    order: 780
+  fastqc_raw:
+    order: 90
+  fastqc_trimmed:
+    order: 80
+  multiqc_software_versions:
+    order: 1
+
+module_order:
+  - fastqc:
+      name: "FastQC (raw)"
+      info: "This section of the report shows FastQC results before adapter trimming."
+      anchor: "fastqc_raw"
+      path_filters:
+        - "data/fastqc/raw/*.zip"
+  - fastqc:
+      name: "FastQC (trimmed)"
+      info: "This section of the report shows FastQC results after adapter trimming."
+      anchor: "fastqc_trimmed"
+      path_filters:
+        - "data/fastqc/trimmed/*.zip"
+
+
+extra_fn_clean_exts:
+  - "_matches"
+  - ".lowq_filt"
+  - "_fingerprint"
+  - "_fingerprint.tab"
+
+sp:
+  sourmash/gather:
+    fn: "*_matches.csv"
+
+lib_qc:
+  fn: "*.lib_qc.tsv"
+
+table_cond_formatting_rules:
+  mqc-generalstats-bowtie_2_hisat2_overall_alignment_rate:
+    pass:
+      - gt: 80
+      - eq: 80
+    warn:
+      - lt: 80
+    fail:
+      - lt: 60
+  mqc-generalstats-fastp-after_filtering_gc_content:
+    pass:
+      - lt: 60
+      - eq: 60
+    warn:
+      - gt: 60
+      - lt: 40
+    fail:
+      - gt: 70
+      - lt: 30
+  mqc-generalstats-fastp-after_filtering_q30_bases:
+    pass:
+      - gt: 80
+      - eq: 80
+    warn:
+      - lt: 80
+    fail:
+      - lt: 70
+  mqc-generalstats-fastp-after_filtering_q30_rate:
+    pass:
+      - gt: 90
+    warn:
+      - lt: 90
+    fail:
+      - lt: 80
+  mqc-generalstats-fastp-filtering_result_passed_filter_reads:
+    pass:
+      - gt: 30000000
+      - eq: 30000000
+    warn:
+      - lt: 30000000
+    fail:
+      - lt: 10000000
+  mqc-generalstats-fastp-pct_duplication:
+    pass:
+      - lt: 50
+      - eq: 50
+    warn:
+      - gt: 50
+    fail:
+      - gt: 70
+  mqc-generalstats-fastp-pct_surviving:
+    pass:
+      - gt: 90
+      - eq: 90
+    warn:
+      - lt: 90
+    fail:
+      - lt: 80
+  mqc-generalstats-fastqc_raw-percent_duplicates:
+    pass:
+      - lt: 50
+      - eq: 50
+    warn:
+      - gt: 50
+    fail:
+      - gt: 70
+  mqc-generalstats-fastqc_raw-percent_fails:
+    pass:
+      - lt: 10
+      - eq: 10
+    warn:
+      - gt: 10
+    fail:
+      - gt: 20
+  mqc-generalstats-fastqc_raw-percent_gc:
+    pass:
+      - gt: 40
+      - eq: 40
+      - lt: 60
+      - eq: 60
+    warn:
+      - lt: 40
+      - gt: 60
+    fail:
+      - lt: 30
+      - gt: 70
+  mqc-generalstats-fastqc_raw-total_sequences:
+    pass:
+      - gt: 30000000
+      - eq: 30000000
+    warn:
+      - lt: 30000000
+    fail:
+      - lt: 10000000
+  mqc-generalstats-fastqc_trimmed-percent_duplicates:
+    pass:
+      - lt: 50
+      - eq: 50
+    warn:
+      - gt: 50
+    fail:
+      - gt: 70
+  mqc-generalstats-fastqc_trimmed-percent_fails:
+    pass:
+      - lt: 10
+      - eq: 10
+    warn:
+      - gt: 10
+    fail:
+      - gt: 20
+  mqc-generalstats-fastqc_trimmed-percent_gc:
+    pass:
+      - gt: 40
+      - eq: 40
+      - lt: 60
+      - eq: 60
+    warn:
+      - lt: 40
+      - gt: 60
+    fail:
+      - lt: 30
+      - gt: 70
+  mqc-generalstats-fastqc_trimmed-total_sequences:
+    pass:
+      - gt: 30000000
+      - eq: 30000000
+    warn:
+      - lt: 30000000
+    fail:
+      - lt: 10000000
+  mqc-generalstats-phantompeakqualtools-Estimated_Fragment_Length_bp:
+    pass:
+      - gt: 99
+    warn:
+      - lt: 100
+      - gt: 800
+    fail:
+      - lt: 50
+      - gt: 1200
+  mqc-generalstats-phantompeakqualtools-NSC:
+    pass:
+      - gt: 1.1
+      - eq: 1.1
+    warn:
+      - lt: 1.1
+    fail:
+      - lt: 1.05
+  mqc-generalstats-phantompeakqualtools-RSC:
+    pass:
+      - gt: 1
+      - eq: 1
+    warn:
+      - lt: 1
+    fail:
+      - lt: 0.8
+  mqc-generalstats-picard_mark_duplicates-PERCENT_DUPLICATION:
+    pass:
+      - lt: 50
+      - eq: 50
+    warn:
+      - gt: 50
+    fail:
+      - gt: 70
