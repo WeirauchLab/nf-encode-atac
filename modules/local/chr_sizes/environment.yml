@@ -1,6 +1,0 @@
-name: alpine_chr_sizes
-channels:
-  - conda-forge
-  - defaults
-dependencies:
-  - conda-forge::gawk
