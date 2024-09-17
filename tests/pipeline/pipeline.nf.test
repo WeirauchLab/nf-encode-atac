@@ -1,0 +1,33 @@
+nextflow_pipeline {
+	name "Test ChIP-seq pipeline"
+	script "../../main.nf"
+	
+	test("Should run successfully") {
+		when {
+			params {
+				input                = "${projectDir}/assets/test_data/samplesheet.csv"
+				outdir               = "test_results/runs/chr19_subset"
+				fasta                = "https://raw.githubusercontent.com/andvon/test_datasets/nf-encode-chip/data/genome/genome.fasta.gz"
+				gtf                  = "https://raw.githubusercontent.com/andvon/test_datasets/nf-encode-chip/data/genome/annotations_subset.gtf.gz"
+				mito_chr_name        = "chrM"
+				exclusion_peaks      = "https://raw.githubusercontent.com/andvon/test_datasets/nf-encode-chip/data/genome/exclusion_regions.bed.gz"
+				gensz                = 10000000
+				sourmash_db          = "https://farm.cse.ucdavis.edu/~ctbrown/sourmash-db/gtdb-rs214/gtdb-rs214-reps.k31.zip"
+				sourmash_ext_args    = "abund"
+				kraken2_db           = "https://raw.githubusercontent.com/andvon/test_datasets/nf-encode-chip/data/metagenomics/kraken2_test_db.tar"
+				skip_sourmash        = true
+				max_cpus             = 2
+				max_memory           = "6.GB"
+				max_walltime         = "24.h"
+				homer_motif_lib      = "https://raw.githubusercontent.com/andvon/test_datasets/nf-encode-chip/data/genome/homer_ctcf.motif"
+				save_reference	     = false
+				save_trimmed_fastq   = false
+				publish_dir_mode     = "symlink"
+			}
+		}
+
+		then {
+			assert workflow.success
+		}
+	}
+}

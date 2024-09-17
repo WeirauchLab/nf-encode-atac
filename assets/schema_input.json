@@ -1,0 +1,63 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/cchmc/nf-encode-atac/master/assets/schema_input.json",
+	"title": "cchmc/nf-encode-atac pipeline - params.input schema",
+	"description": "Schema for the file provided with params.input",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"id": {
+				"type": "string",
+				"pattern": "^\\S+$",
+				"errorMessage": "Sample name must be provided and cannot contain spaces",
+				"meta": [
+					"id",
+					"sample_id"
+				]
+			},
+			"control_sample_id": {
+				"type": "string",
+				"pattern": "^\\S+$",
+				"errorMessage": "Sample name must be provided and cannot contain spaces",
+				"meta": [
+					"control_sample_id"
+				]
+			},
+			"control_group_id": {
+				"type": "string",
+				"pattern": "^\\S+$",
+				"errorMessage": "Sample name must be provided and cannot contain spaces",
+				"meta": [
+					"control_group_id"
+				]
+			},
+			"group": {
+				"type": "string",
+				"pattern": "^\\S+$",
+				"errorMessage": "Sample name must be provided and cannot contain spaces",
+				"meta": [
+					"group"
+				]
+			},
+			"fastq_1": {
+				"type": "string",
+				"pattern": "^\\S+\\.f(ast)?q\\.gz$",
+				"format": "file-path",
+				"exists": true,
+				"errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+			},
+			"fastq_2": {
+				"errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
+				"type": "string",
+				"pattern": "^\\S+\\.f(ast)?q\\.gz$",
+				"format": "file-path"
+			}
+		},
+		"required": [
+			"id",
+			"group",
+			"fastq_1"
+		]
+	}
+}

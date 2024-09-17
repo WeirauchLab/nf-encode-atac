@@ -1,0 +1,35 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"id": {
+				"type": "string",
+				"meta": ["id"]
+			},
+			"replicate": {
+				"type": "string",
+				"meta": ["replicate"]
+			},
+			"group": {
+				"type": "string",
+				"meta": ["group"]
+			},
+			"fastq_1": {
+				"type": "string",
+				"pattern": "^\\S+\\.f(ast)?q\\.gz$",
+				"format": "file-path",
+				"errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+			},
+			"fastq_2": {
+				"type": "string",
+				"pattern": "^\\S+\\.f(ast)?q\\.gz$",
+				"format": "file-path",
+				"errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
+				"default": null
+			}
+		},
+		"required": ["id", "fastq_1", "replicate", "group"]
+	}
+}

@@ -1,0 +1,6 @@
+name: samtools_faidx
+channels:
+  - bioconda
+  - defaults
+dependencies:
+  - bioconda::samtools

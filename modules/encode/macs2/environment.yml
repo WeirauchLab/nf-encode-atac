@@ -1,0 +1,7 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- bioconda::bedtools=2.31.1
+- bioconda::macs2=2.2.9.1
+- bioconda::ucsc-bedgraphtobigwig=455
