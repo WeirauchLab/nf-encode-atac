@@ -1,6 +1,0 @@
-name: samtools_flagstats
-channels:
-  - bioconda
-  - defaults
-dependencies:
-  - bioconda::samtools
