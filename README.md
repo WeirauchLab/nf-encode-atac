@@ -1,16 +1,16 @@
-# NF-ENCODE-CHIP
+# NF-ENCODE-ATAC
 
-This is a nextflow-based pipeline designed to process ChIP-seq data based on
-the ENCODE's ChIP-seq pipeline. It attempts to replicate the commands
+This is a nextflow-based pipeline designed to process ATAC-seq data based on
+the ENCODE's ATAC-seq pipeline. It attempts to replicate the commands
 that would normally be processed by ENCODE, but in a Nextflow-native format.
 
 Please see the later section for more details.
 
 ## Citation / Credits
 
-Please be sure you cite ENCODE's ChIP-seq pipeline if you use this pipeline:
+Please be sure you cite ENCODE's ATAC-seq pipeline if you use this pipeline:
 
-- [ENCODE-DCC/chip-seq-pipeline2:2.0.0](https://github.com/ENCODE-DCC/chip-seq-pipeline2/tree/v2.0.0)
+- [ENCODE-DCC/atac-seq-pipeline:2.0.0](https://github.com/ENCODE-DCC/atac-seq-pipeline2/tree/v2.0.0)
 
 ## Quick Start
 
@@ -32,13 +32,13 @@ Additionally, it is HIGHLY recommended that you have one of:
 The pipeline can be installed using the following command:
 
 ```bash
-nextflow pull cchmc/nf-encode-chip
+nextflow pull WeirauchLab/nf-encode-atac
 ```
 
 If that fails, you can manually install the pipeline by cloning the repository:
 
 ```bash
-git clone cchmc/nf-encode-chip
+git clone WeirauchLab/nf-encode-atac
 ```
 
 ### Prepare samplesheet
@@ -134,10 +134,10 @@ To run the pipeline, you can use the following command:
 
 ```bash
 # Basic command
-nextflow run cchmc/nf-encode-chip -params-file params.json
+nextflow run WeirauchLab/nf-encode-atac -params-file params.json
 
 # Use profiles to specify execution profiles. Here, docker is used.
-nextflow run cchmc/nf-encode-chip -profile docker -params-file params.json
+nextflow run WeirauchLab/nf-encode-atac -profile docker -params-file params.json
 ```
 
 If all goes well, you should see the pipeline start processing your data.
@@ -148,7 +148,7 @@ require that the `workDir` directory is still present.
 
 ### From ENCODE's WDL to Nextflow
 
-This pipeline is specifically based on [ENCODE-DCC/chip-seq-pipeline2:2.0.0](https://github.com/ENCODE-DCC/chip-seq-pipeline2/tree/v2.0.0).
+This pipeline is specifically based on [ENCODE-DCC/atac-seq-pipeline:2.0.0](https://github.com/ENCODE-DCC/atac-seq-pipeline/tree/v2.0.0).
 The pipeline is designed to replicate the commands that would normally be processed by ENCODE, but in a Nextflow-native format.
 This was done by looking through the repository, dissecting the commands, and converting them to Nextflow processes.
 Several steps were validated by looking at the scripts run by Cromwell.
