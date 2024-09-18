@@ -1,3 +1,19 @@
+sample_names_ignore:
+  - "*_pr1"
+  - "*_pr2"
+table_sample_merge:
+  "R1": "_1"
+  "R2": "_2"
+  "PR1": "_pr1"
+  "PR2": "_pr2"
+
+extra_fn_clean_exts:
+  - "_matches"
+  - ".lowq_filt"
+  - "_fingerprint"
+  - "_fingerprint.tab"
+  - ".nodup"
+
 report_section_order:
   fastp:
     order: 1000
@@ -42,20 +58,20 @@ module_order:
       path_filters:
         - "data/fastqc/trimmed/*.zip"
 
-
-extra_fn_clean_exts:
-  - "_matches"
-  - ".lowq_filt"
-  - "_fingerprint"
-  - "_fingerprint.tab"
-  - ".nodup"
-
 sp:
   sourmash/gather:
     fn: "*_matches.csv"
 
+table_columns_visible:
+  mtnucratio: false
+  ENCODE Library Complexity:
+    positions_with_one_read: false
+    positions_with_two_reads: false
+    total_fragments: false
+    distinct_fragments: false
+
 table_cond_formatting_rules:
-  mqc_generalstats_bowtie_2_hisat2_overall_alignment_rate:
+  bowtie_2_hisat2-overall_alignment_rate:
     pass:
       - gt: 80
       - eq: 80
@@ -63,7 +79,7 @@ table_cond_formatting_rules:
       - lt: 80
     fail:
       - lt: 60
-  mqc_generalstats_fastp_after_filtering_gc_content:
+  fastp-after_filtering_gc_content:
     pass:
       - lt: 60
       - eq: 60
@@ -73,38 +89,7 @@ table_cond_formatting_rules:
     fail:
       - gt: 70
       - lt: 30
-  mqc_generalstats_fastp_after_filtering_q30_bases:
-    pass:
-      - gt: 80
-      - eq: 80
-    warn:
-      - lt: 80
-    fail:
-      - lt: 70
-  mqc_generalstats_fastp_after_filtering_q30_rate:
-    pass:
-      - gt: 90
-    warn:
-      - lt: 90
-    fail:
-      - lt: 80
-  mqc_generalstats_fastp_filtering_result_passed_filter_reads:
-    pass:
-      - gt: 30000000
-      - eq: 30000000
-    warn:
-      - lt: 30000000
-    fail:
-      - lt: 10000000
-  mqc_generalstats_fastp_pct_duplication:
-    pass:
-      - lt: 50
-      - eq: 50
-    warn:
-      - gt: 50
-    fail:
-      - gt: 70
-  mqc_generalstats_fastp_pct_surviving:
+  fastp-pct_surviving:
     pass:
       - gt: 90
       - eq: 90
@@ -112,7 +97,38 @@ table_cond_formatting_rules:
       - lt: 90
     fail:
       - lt: 80
-  mqc_generalstats_fastqc_raw_percent_duplicates:
+  fastp-pct_adapter:
+    pass:
+      - lt: 20
+      - eq: 20
+    warn:
+      - gt: 20
+    fail:
+      - gt: 40
+  fastp-after_filtering_q30_bases:
+    pass:
+      - gt: 80
+      - eq: 80
+    warn:
+      - lt: 80
+    fail:
+      - lt: 70
+  fastp-after_filtering_q30_rate:
+    pass:
+      - gt: 90
+    warn:
+      - lt: 90
+    fail:
+      - lt: 80
+  fastp-filtering_result_passed_filter_reads:
+    pass:
+      - gt: 30
+      - eq: 30
+    warn:
+      - lt: 30
+    fail:
+      - lt: 15
+  fastp-pct_duplication:
     pass:
       - lt: 50
       - eq: 50
@@ -120,7 +136,23 @@ table_cond_formatting_rules:
       - gt: 50
     fail:
       - gt: 70
-  mqc_generalstats_fastqc_raw_percent_fails:
+  kraken-pct_top_one:
+    pass:
+      - gt: 90
+      - eq: 90
+    warn:
+      - lt: 90
+    fail:
+      - lt: 75
+  kraken-pct_top_n:
+    pass:
+      - gt: 90
+      - eq: 90
+    warn:
+      - lt: 90
+    fail:
+      - lt: 75
+  kraken-pct_unclassified:
     pass:
       - lt: 10
       - eq: 10
@@ -128,7 +160,23 @@ table_cond_formatting_rules:
       - gt: 10
     fail:
       - gt: 20
-  mqc_generalstats_fastqc_raw_percent_gc:
+  fastqc_raw-percent_duplicates:
+    pass:
+      - lt: 50
+      - eq: 50
+    warn:
+      - gt: 50
+    fail:
+      - gt: 70
+  fastqc_raw-percent_fails:
+    pass:
+      - lt: 10
+      - eq: 10
+    warn:
+      - gt: 10
+    fail:
+      - gt: 20
+  fastqc_raw-percent_gc:
     pass:
       - gt: 40
       - eq: 40
@@ -140,15 +188,15 @@ table_cond_formatting_rules:
     fail:
       - lt: 30
       - gt: 70
-  mqc_generalstats_fastqc_raw_total_sequences:
+  fastqc_raw-total_sequences:
     pass:
-      - gt: 30000000
-      - eq: 30000000
+      - gt: 30
+      - eq: 30
     warn:
-      - lt: 30000000
+      - lt: 30
     fail:
-      - lt: 10000000
-  mqc_generalstats_fastqc_trimmed_percent_duplicates:
+      - lt: 10
+  fastqc_trimmed-percent_duplicates:
     pass:
       - lt: 50
       - eq: 50
@@ -156,7 +204,7 @@ table_cond_formatting_rules:
       - gt: 50
     fail:
       - gt: 70
-  mqc_generalstats_fastqc_trimmed_percent_fails:
+  fastqc_trimmed-percent_fails:
     pass:
       - lt: 10
       - eq: 10
@@ -164,7 +212,7 @@ table_cond_formatting_rules:
       - gt: 10
     fail:
       - gt: 20
-  mqc_generalstats_fastqc_trimmed_percent_gc:
+  fastqc_trimmed-percent_gc:
     pass:
       - gt: 40
       - eq: 40
@@ -176,24 +224,24 @@ table_cond_formatting_rules:
     fail:
       - lt: 30
       - gt: 70
-  mqc_generalstats_fastqc_trimmed_total_sequences:
+  fastqc_trimmed-total_sequences:
     pass:
-      - gt: 30000000
-      - eq: 30000000
+      - gt: 30
+      - eq: 30
     warn:
-      - lt: 30000000
+      - lt: 30
     fail:
-      - lt: 10000000
-  mqc_generalstats_phantompeakqualtools_Estimated_Fragment_Length_bp:
+      - lt: 10
+  phantompeakqualtools-Estimated_Fragment_Length_bp:
     pass:
-      - gt: 99
+      - gt: 100
+      - eq: 100
     warn:
       - lt: 100
-      - gt: 800
     fail:
       - lt: 50
       - gt: 1200
-  mqc_generalstats_phantompeakqualtools_NSC:
+  phantompeakqualtools-NSC:
     pass:
       - gt: 1.1
       - eq: 1.1
@@ -201,7 +249,7 @@ table_cond_formatting_rules:
       - lt: 1.1
     fail:
       - lt: 1.05
-  mqc_generalstats_phantompeakqualtools_RSC:
+  phantompeakqualtools-RSC:
     pass:
       - gt: 1
       - eq: 1
@@ -209,7 +257,16 @@ table_cond_formatting_rules:
       - lt: 1
     fail:
       - lt: 0.8
-  mqc_generalstats_picard_mark_duplicates_PERCENT_DUPLICATION:
+  picard_insertsizemetrics-summed_median:
+    pass:
+      - gt: 100
+      - eq: 100
+    warn:
+      - lt: 100
+    fail:
+      - lt: 50
+      - gt: 1200
+  picard_mark_duplicates-PERCENT_DUPLICATION:
     pass:
       - lt: 50
       - eq: 50
@@ -217,3 +274,51 @@ table_cond_formatting_rules:
       - gt: 50
     fail:
       - gt: 70
+  sambamba_markdup-duplicate_rate:
+    pass:
+      - lt: 30
+      - eq: 30
+    warn:
+      - gt: 30
+    fail:
+      - gt: 50
+  samtools_flagstat-mapped_passed:
+    pass:
+      - gt: 30
+      - eq: 30
+    warn:
+      - lt: 30
+    fail:
+      - lt: 20
+  encode_library_complexity-distinct_fragments:
+    pass:
+      - gt: 30
+      - eq: 30
+    warn:
+      - lt: 30
+    fail:
+      - lt: 20
+  encode_library_complexity-nrf:
+    pass:
+      - gt: 0.8
+      - eq: 0.8
+    warn:
+      - lt: 0.8
+    fail:
+      - lt: 0.7
+  encode_library_complexity-pbc1:
+    pass:
+      - gt: 0.75
+      - eq: 0.75
+    warn:
+      - lt: 0.75
+    fail:
+      - lt: 0.5
+  encode_library_complexity-pbc2:
+    pass:
+      - gt: 1
+      - eq: 1
+    warn:
+      - lt: 1
+    fail:
+      - lt: 0.9

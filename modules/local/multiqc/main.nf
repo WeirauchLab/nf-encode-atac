@@ -3,7 +3,7 @@ process MULTIQC {
     cache false
 
     conda "${moduleDir}/environment.yml"
-    container "community.wave.seqera.io/library/multiqc:1.24.1--789bc3917c8666da"
+    container "community.wave.seqera.io/library/multiqc:1.25--9968ff4994a2e2d7"
 
     input:
     path multiqc_config
