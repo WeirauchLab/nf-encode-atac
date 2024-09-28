@@ -52,6 +52,20 @@
 				"type": "string",
 				"pattern": "^\\S+\\.f(ast)?q\\.gz$",
 				"format": "file-path"
+			},
+			"adapter_1": {
+				"errorMessage": "The supplied adapter sequence for read 1 is not valid",
+				"type": "string",
+				"meta": [
+					"adapter_1"
+				]
+			},
+			"adapter_2": {
+				"errorMessage": "The supplied adapter sequence for read 2 is not valid",
+				"type": "string",
+				"meta": [
+					"adapter_2"
+				]
 			}
 		},
 		"required": [
