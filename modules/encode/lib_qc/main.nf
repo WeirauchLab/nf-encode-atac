@@ -3,7 +3,7 @@ process LIB_QC {
 
 	cpus   = {1 * task.attempt}
 	memory = {24.GB * task.attempt}
-	time   = {2.h * task.attempt}
+	time   = {4.h * task.attempt}
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/bedtools_samtools_coreutils_gawk:35ad44d2da724fcb"
