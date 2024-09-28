@@ -36,6 +36,21 @@ validateParameters()
 // Print summary of supplied parameters
 log.info paramsSummaryLog(workflow)
 
+// function to take a channel, check that either 0 or 1 distinct adapters are present for each read, and return the channel
+def check_adapter_valid(input_channel){
+	input_channel
+		| map { meta, fq ->
+			[meta.id, meta.adapter_1, meta.adapter_2]
+		}
+		| groupTuple(by: 0)
+		| map {id, adapter_1, adapter_2 ->
+			def adapter_1_distinct_size = adapter_1.unique().size()
+			def adapter_2_distinct_size = adapter_2.unique().size()
+			assert adapter_1_distinct_size <= 1, "ERROR: Multiple distinct adapter sequences found for sample ${id}. Adapters are: ${adapter_1.unique()}. Please ensure that all adapter sequences are the same for a given sample."
+			assert adapter_2_distinct_size <= 1, "ERROR: Multiple distinct adapter sequences found for sample ${id}. Adapters are: ${adapter_2.unique()}. Please ensure that all adapter sequences are the same for a given sample."
+		}
+	return input_channel
+}
 
 workflow ATACSEQ {
 	// ------------------------
@@ -53,13 +68,18 @@ workflow ATACSEQ {
 
 	Channel
 		.fromList(samplesheetToList(params.input, "assets/schema_input.json"))
-		| map{ meta, fq1, fq2 -> 
+		| map{ meta, fq1, fq2 ->
+			def meta_clone = meta.clone()
+			meta_clone.adapter_1 = meta_clone.adapter_1 ?: params.adapter_1 ?: []
+			meta_clone.adapter_2 = meta_clone.adapter_2 ?: params.adapter_2 ?: []
 			if(fq2){
-				[ meta + [sample_type: "sample", single_end: false, pr_rep: []], [fq1, fq2] ]
+				[ meta_clone + [sample_type: "sample", single_end: false, pr_rep: []], [fq1, fq2] ]
 			} else {
-				[ meta + [sample_type: "sample", single_end: true, pr_rep: []], [fq1] ]
+				meta_clone.adapter_2 = []
+				[ meta_clone + [sample_type: "sample", single_end: true, pr_rep: []], [fq1] ]
 			}
 		}
+		| check_adapter_valid
 		| set{ch_input_base}
 	
 	ch_input_base

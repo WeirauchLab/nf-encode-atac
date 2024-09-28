@@ -56,6 +56,8 @@ The samplesheet is a CSV file that contains the following columns:
 | control_group_id  | No       |         | The ID of the control group                                      |
 | fastq_1           | Yes      |         | The path to the first fastq file                                 |
 | fastq_2           | No       |         | The path to the second fastq file                                |
+| adapter_1         | No       |         | adapter sequence to trim for read 1. automatic if not supplied   |
+| adapter_2         | No       |         | adapter sequence to trim for read 2. automatic if not supplied   |
 
 An example samplesheet is shown below:
 
@@ -68,6 +70,13 @@ example2,example,/path/to/example2_R1_2.fastq.gz,/path/to/example2_R2_2.fastq.gz
 
 If the fastq files for a sample are split across multiple files, you can specify
 multiple rows for the same sample ID. They will be merged together (see "example2" in the csv table above).
+
+A note about adapters:
+
+If you do not specify an adapter, the pipeline will let fastp attempt to automatically detect the adapter sequence.
+If you do specify an adapter, the pipeline will use that adapter sequence for trimming.
+There are two params that can be used as well, `adapter_1` and `adapter_2`, which can be used to globally specify adapter sequences.
+If these are set, any adapter sequences NOT specified in the samplesheet will use these values.
 
 #### About control groups
 
