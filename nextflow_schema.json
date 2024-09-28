@@ -102,6 +102,21 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Save fastq files after trimming."
+                },
+                "adapter_1": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Specify an adapter sequence to trim from read1 with fastp. If not specified, fastp will try to auto-detect the adapter. If specified, this will override auto detection for any sample without a specified adapter."
+                },
+                "adapter_2": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Specify an adapter sequence to trim from read2 with fastp. If not specified, fastp will try to auto-detect the adapter. If specified, this will override auto detection for any sample without a specified adapter."
+                },
+                "fastp_detect_adapter_for_pe": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "fastp uses overlap analysis to trim PE reads by default. Enabling this will force fastp to use adapter detection instead."
                 }
             }
         },
