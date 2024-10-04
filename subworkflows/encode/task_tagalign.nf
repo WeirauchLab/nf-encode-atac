@@ -13,15 +13,15 @@ workflow TASK_TAGALIGN {
 
 	main:
 
-	ch_tagalign = Channel.empty()
+	ch_tagalign_output = Channel.empty()
+	ch_tagalign_pr     = Channel.empty()
 
 	BAM_TO_TA(ch_bam)
-	ch_tagalign = BAM_TO_TA.out.tagAlign
-	
+	ch_tagalign_reps   = BAM_TO_TA.out.tagAlign
 
 	if(!skip_pseudoreplication){
 		CREATE_PSEUDOREPS(
-			ch_tagalign,
+			ch_tagalign_reps,
 			pseudorep_seed
 		)
 		CREATE_PSEUDOREPS.out.tagAlign
@@ -34,14 +34,11 @@ workflow TASK_TAGALIGN {
 				new_meta.id = "${new_meta.sample_id}_${new_meta.pr_rep}"
 				[ new_meta, ta ]
 			}
-			.set { ch_pr_ta }
-
-		ch_tagalign
-			| mix(ch_pr_ta)
-			| set { ch_tagalign_w_pr }
+			.set { ch_tagalign_pr }
 	}
 
-	ch_tagalign_w_pr
+	ch_tagalign_reps
+		| mix(ch_tagalign_pr)
 		| map{meta, ta ->
 			def group_meta = [id: []] + meta.subMap("group", "single_end", "sample_type", "pr_rep")
 			[group_meta,meta.sample_id,meta.control_group_id, ta]
@@ -62,13 +59,11 @@ workflow TASK_TAGALIGN {
 		}
 		// | filter {meta, ta_list -> ta_list.size() > 1}
 		| set{ch_pooled_ta_input}
-	
-	
 
 	CAT_FILES(ch_pooled_ta_input,"tagAlign.gz")
-	ch_tagalign = ch_tagalign.mix(CAT_FILES.out.output)
 
-	ch_tagalign_w_pr
+	ch_tagalign_reps
+		| mix(ch_tagalign_pr)
 		| mix(CAT_FILES.out.output)
 		| set{ch_tagalign_output}
 	
