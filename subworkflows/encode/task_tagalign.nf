@@ -46,16 +46,16 @@ workflow TASK_TAGALIGN {
 		| groupTuple(by: 0)
 		| map{meta, sample_id, control_group_id, ta_list ->
 			def new_meta = meta.clone()
-			control_group_id = control_group_id.flatten().unique()
-			if (control_group_id.size() > 1){
+			def control_group_id_unique = control_group_id.flatten().unique().sort()
+			if (control_group_id_unique.size() > 1){
 				throw new Exception("Multiple control groups found for ${meta.group} when pooling tagAligns. Please check the sample sheet.")
 			}
 			new_meta.sample_type = "pooled"
 			new_meta.id = new_meta.pr_rep ? [new_meta.group, new_meta.sample_type, new_meta.pr_rep].join("_") : [new_meta.group, new_meta.sample_type].join("_")
-			new_meta.sample_id = sample_id.flatten().unique()
+			new_meta.sample_id = sample_id.flatten().unique().sort()
 			new_meta.control_sample_id = []
-			new_meta.control_group_id  = control_group_id[0]
-			[new_meta, ta_list.flatten()]
+			new_meta.control_group_id  = control_group_id_unique[0]
+			[new_meta, ta_list.flatten().sort()]
 		}
 		// | filter {meta, ta_list -> ta_list.size() > 1}
 		| set{ch_pooled_ta_input}
