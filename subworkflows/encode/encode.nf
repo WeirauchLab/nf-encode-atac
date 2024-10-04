@@ -92,11 +92,11 @@ workflow ENCODE {
 		ch_tagalign,
 		ch_mito_chr_name
 	)
-	ch_tagalign = TASK_XCORR.out.tagAlign
+	ch_tagalign_w_fraglen = TASK_XCORR.out.tagAlign
 
 
 	TASK_MACS2(
-		ch_tagalign,
+		ch_tagalign_w_fraglen,
 		ch_fai,
 		ch_gensz,
 		max_peaks
@@ -138,7 +138,7 @@ workflow ENCODE {
 			[meta.group, meta, peaks]
 		}
 		| combine(
-			ch_tagalign
+			ch_tagalign_w_fraglen
 				| filter{ meta, ta -> meta.sample_type == "pooled" && !meta.pr_rep }
 				| map{ meta, ta ->[meta.group, ta] },
 			by: 0
@@ -154,7 +154,7 @@ workflow ENCODE {
 			[meta.sample_id, meta, peaks]
 		}
 		| combine(
-			ch_tagalign
+			ch_tagalign_w_fraglen
 				| filter{meta, ta -> meta.sample_type == "sample"}
 				| map{meta, ta -> [meta.sample_id, ta]},
 			by: 0
@@ -171,7 +171,7 @@ workflow ENCODE {
 		| mix(
 			ch_peaks_filtered
 				| map{meta, peak ->[meta.id, meta, peak]}
-				| join(ch_tagalign.map{meta, ta ->[meta.id, ta]}, by: 0)
+				| join(ch_tagalign_w_fraglen.map{meta, ta ->[meta.id, ta]}, by: 0)
 				| map{it -> it[1..-1]}
 		)
 		| mix(ch_rep_peaks_prepared)

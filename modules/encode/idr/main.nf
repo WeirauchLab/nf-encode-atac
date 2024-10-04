@@ -24,6 +24,9 @@ process IDR_PEAKS {
 	def rank_id = available_ranks[rank]
 	def negative_log10_thresh = -Math.log10(idr_threshold)
 	"""
+	mkdir tmp_matplotlib
+	export MPLCONFIGDIR=tmp_matplotlib
+
 	idr \\
 		--peak-list ${peak1} \\
 		--samples ${peak2} ${peak3} \\
@@ -42,6 +45,8 @@ process IDR_PEAKS {
 	else
 		echo "IDR failed due to insufficient peaks, skipping this step."
 	fi
+
+	rm -rf tmp_matplotlib
 
 	"""
 }
