@@ -1,9 +1,10 @@
 sample_names_ignore:
   - "*_pr1"
   - "*_pr2"
+  - "*_pooled"
 table_sample_merge:
-  "R1": "_1"
-  "R2": "_2"
+  "R1": "_read1"
+  "R2": "_read2"
   "PR1": "_pr1"
   "PR2": "_pr2"
 
