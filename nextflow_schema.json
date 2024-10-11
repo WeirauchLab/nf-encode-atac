@@ -85,6 +85,14 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Save genome files like indices."
+                },
+                "tss_bed": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/plain",
+                    "description": "Path to TSS bed file.",
+                    "help_text": ""
                 }
             }
         },
