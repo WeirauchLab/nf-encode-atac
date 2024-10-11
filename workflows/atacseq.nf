@@ -63,7 +63,8 @@ workflow ATACSEQ {
 		params.gensz,
 		params.bowtie2_index,
 		params.exclusion_peaks,
-		params.save_reference
+		params.save_reference,
+		params.tss_bed
 	)
 
 	Channel
