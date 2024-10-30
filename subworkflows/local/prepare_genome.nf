@@ -6,6 +6,7 @@ include { SAMTOOLS_FAIDX                      } from '../../modules/local/samtoo
 include { SAMTOOLS_FAIDX_CHR                  } from '../../modules/local/samtools/faidx_chr/main'
 include { BOWTIE2_BUILD                       } from '../../modules/local/bowtie2/build/main'
 include { UNTAR as UNTAR_BOWTIE2_INDEX        } from '../../modules/nf-core/untar/main'
+include { TSS_EXTRACT                         } from '../../modules/local/tss_extract/main'
 
 workflow PREPARE_GENOME {
 	take:
@@ -15,6 +16,7 @@ workflow PREPARE_GENOME {
 	bowtie2_index    // string
 	exclusion_peaks  // string
 	save_reference   // boolean
+	tss_bed          // string
 
 	main:
 	
@@ -74,6 +76,13 @@ workflow PREPARE_GENOME {
 		ch_exclusion_peaks = channel.value([[:],[]])
 	}
 
+	if(!tss_bed){
+		TSS_EXTRACT(ch_gtf)
+		ch_tss = TSS_EXTRACT.out.bed
+	} else {
+		ch_tss = channel.value([ [id: file(tss_bed).simpleName ], file(tss_bed) ])
+	}
+
 	emit:
 	genome_fasta       = ch_genome_fasta    // channel: [ val(meta), path(genome_fasta) ]
 	genome_fai         = ch_genome_fai      // channel: [ val(meta), path(fai) ]
@@ -81,7 +90,9 @@ workflow PREPARE_GENOME {
 	bowtie2_index      = ch_bowtie2_index   // channel: [ val(meta), path(bowtie2_index) ]
 	exclusion_peaks	   = ch_exclusion_peaks // channel: [ val(meta), path(exclusion_peaks) ]
 	gtf                = ch_gtf             // channel: [ val(meta), path(gtf) ]
+	tss                = ch_tss             // channel: [ val(meta), path(tss_bed) ]
 
 	publish:
 	ch_bowtie2_index >> (save_reference ? "genome/bowtie2" : null)
+	ch_tss           >> "genome/"
 }
