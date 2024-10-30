@@ -344,6 +344,45 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Use ENCODE's overlap analysis calculation instead of an updated bedtools command."
+                },
+                "tsse_upstream": {
+                    "type": "integer",
+                    "default": 2000,
+                    "description": "Upstream distance from TSS to use for TSS enrichment."
+                },
+                "tsse_downstream": {
+                    "type": "integer",
+                    "default": 2000,
+                    "description": "Downstream distance from TSS to use for TSS enrichment."
+                },
+                "tsse_width": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Width of the TSS enrichment window."
+                },
+                "tsse_step": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Step size for the TSS enrichment window."
+                },
+                "tsse_endsize": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Size of the end window for calculating average read depth in TSS enrichment."
+                },
+                "tsse_pseudocount": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Pseudocount to add to TSS enrichment signal."
+                },
+                "tsse_feature": {
+                    "type": "string",
+                    "default": "gene",
+                    "description": "Feature to use for TSS enrichment.",
+                    "enum": [
+                        "gene",
+                        "transcript"
+                    ]
                 }
             }
         },
