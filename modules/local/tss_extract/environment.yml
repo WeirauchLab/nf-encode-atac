@@ -1,0 +1,8 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- bioconda::bioconductor-genomicfeatures=1.54.1
+- bioconda::bioconductor-rtracklayer=1.62.0
+- conda-forge::r-argparse=2.2.3
+- conda-forge::r-tidyverse=2.0.0

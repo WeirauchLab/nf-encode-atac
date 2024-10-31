@@ -15,7 +15,11 @@ extra_fn_clean_exts:
   - "_fingerprint.tab"
   - ".nodup"
 
+thousandsSep_format: ','
+
 report_section_order:
+  seqkit:
+    order: 1010
   fastp:
     order: 1000
   bowtie2:
@@ -24,10 +28,12 @@ report_section_order:
     order: 980
   samtools:
     order: 972
-  encode_lib_qc:
+  atacseqqc:
     order: 971
-  spp_xcorr:
+  encode_lib_qc:
     order: 970
+  spp_xcorr:
+    order: 969
   deepTools:
     order: 960
   encode_reproducibility:
@@ -70,6 +76,17 @@ table_columns_visible:
     positions_with_two_reads: false
     total_fragments: false
     distinct_fragments: false
+  FastQC (trimmed):
+    Seqs: false
+    Dups: false
+    GC: false
+  FastQC (raw):
+    Dups: false
+    GC: false
+  fastp:
+    "% Duplication": false
+  phantompeakqualtools:
+    "Frag Length": false
 
 table_cond_formatting_rules:
   bowtie_2_hisat2-overall_alignment_rate:
@@ -323,3 +340,42 @@ table_cond_formatting_rules:
       - lt: 1
     fail:
       - lt: 0.9
+  atacseqqc-score:
+    pass:
+      - gt: 10
+      - eq: 10
+    warn:
+      - lt: 10
+    fail:
+      - lt: 5
+
+table_columns_placement:
+  "FastQC (raw)":
+    "Seqs": 9
+  "fastp":
+    "% > Q30": 10
+    "Mb Q30 bases": 10
+    "Reads After Filtering": 10
+    "GC Content": 10
+    "% PF": 10
+    "% Adapter": 10
+    "% Duplication": 10
+  "Bowtie 2 / HiSAT2":
+    "% Aligned": 20
+  "Samtools: flagstat":
+    "Reads mapped": 30
+  "Sambamba: markdup":
+    "% Dups": 40
+  "ATACseqQC":
+    "TSSE Score": 50
+  "Picard: InsertSizeMetrics":
+    "Insert Size": 59
+  "phantompeakqualtools":
+    "Frag Length": 60
+    "NSC": 60
+    "RSC": 60
+  "ENCODE Library Complexity":
+    "nrf": 70
+    "pbc1": 70
+    "pbc2": 70
+  

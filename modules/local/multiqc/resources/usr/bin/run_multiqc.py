@@ -6,6 +6,8 @@ from encode_reproducibility import EncodeReproducibility
 from spp_xcorr import SppXCorr
 from encode_libqc import EncodeLibQC
 from encode_peakstats import EncodePeakStats
+from atacseqqc_stats import AtacSeqQC
+from seqkit import SeqKit
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", type=str)
@@ -15,6 +17,9 @@ args = parser.parse_args()
 multiqc.parse_logs("data")
 
 # ----------------- Custom MultiQC modules -----------------
+
+# SeqKit
+multiqc.report.modules.append(SeqKit())
 
 # ENCODE lib complexity
 multiqc.report.modules.append(EncodeLibQC())
@@ -30,6 +35,9 @@ multiqc.report.modules.append(EncodePeakStats())
 
 # Custom HOMER module
 multiqc.report.modules.append(Homer())
+
+# ATACseqQC
+multiqc.report.modules.append(AtacSeqQC())
 
 
 # Write the report

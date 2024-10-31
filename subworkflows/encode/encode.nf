@@ -4,6 +4,7 @@ include { FILTER_PEAKS                            } from "../../modules/encode/f
 include { LIB_QC                                  } from "../../modules/encode/lib_qc/main"
 include { CALC_PEAKSTATS as CALC_PEAKSTATS_REPRO  } from '../../modules/encode/calc_peakstats/main'
 include { CALC_PEAKSTATS as CALC_PEAKSTATS_SAMPLE } from '../../modules/encode/calc_peakstats/main'
+include { TSS_ENRICHMENT                          } from '../../modules/local/tss_enrichment/main'
 
 include { TASK_ALIGN               } from './task_align.nf'
 include { TASK_FILTER              } from './task_filter.nf'
@@ -23,6 +24,7 @@ workflow ENCODE {
 	ch_fastq
 	ch_fasta
 	ch_fai
+	ch_gtf
 	ch_gensz
 	ch_bowtie2_index
 	mapq_threshold
@@ -73,6 +75,11 @@ workflow ENCODE {
 	)
 	ch_filtered_bam = TASK_FILTER.out.bam
 	ch_filtered_bam_bai = TASK_FILTER.out.bam.join(TASK_FILTER.out.bai, by: 0)
+
+	TSS_ENRICHMENT(
+		ch_filtered_bam,
+		ch_gtf
+	)
 
 	LIB_QC(
 		TASK_FILTER.out.markdup_bam
@@ -189,6 +196,7 @@ workflow ENCODE {
 	publish:
 	ch_peaks_filtered		  >> "encode/macs2/filtered"
 	LIB_QC.out.tsv            >> "encode/lib_qc"
+	TSS_ENRICHMENT.out        >> "encode/tss_enrichment"
 
 	emit:
 	bam_aligned                 = TASK_ALIGN.out.bam
@@ -220,4 +228,6 @@ workflow ENCODE {
 	lib_qc                      = LIB_QC.out.tsv
 	peakstats                   = ch_peakstats_repro
 	peakstats_sample            = ch_peakstats_sample
+	tss_enrichment_json         = TSS_ENRICHMENT.out.json
+	tss_enrichment_csv          = TSS_ENRICHMENT.out.csv
 }
