@@ -63,7 +63,8 @@ workflow ATACSEQ {
 		params.gensz,
 		params.bowtie2_index,
 		params.exclusion_peaks,
-		params.save_reference
+		params.save_reference,
+		params.tss_bed
 	)
 
 	Channel
@@ -113,6 +114,7 @@ workflow ATACSEQ {
 		PREPARE_FASTQ.out.fastq,
 		PREPARE_GENOME.out.genome_fasta,
 		PREPARE_GENOME.out.genome_fai,
+		PREPARE_GENOME.out.gtf,
 		PREPARE_GENOME.out.gensz,
 		PREPARE_GENOME.out.bowtie2_index,
 		params.mapq_threshold ? params.mapq_threshold : [],
@@ -214,6 +216,7 @@ workflow ATACSEQ {
 		PREPARE_FASTQ.out.fastqc_raw_zip.collect{it[1]}.ifEmpty{[]},
 		PREPARE_FASTQ.out.fastp_json.collect{it[1]}.ifEmpty{[]},
 		PREPARE_FASTQ.out.fastqc_trimmed_zip.collect{it[1]}.ifEmpty{[]},
+		PREPARE_FASTQ.out.seqkit_tsv.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.bowtie2_log.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.filtered_flagstat.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.picard_metrics.collect{it[1]}.ifEmpty{[]},
@@ -226,6 +229,7 @@ workflow ATACSEQ {
 		ENCODE.out.peakstats.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.peakstats_sample.filter{it[0].reproducibility_mode == "idr"}.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.peakstats_sample.filter{it[0].reproducibility_mode == "overlap"}.collect{it[1]}.ifEmpty{[]},
+		ENCODE.out.tss_enrichment_json.collect{it[1]}.ifEmpty{[]},
 		METAGENOMICS.out.sourmash_gather_csv.collect{it[1]}.ifEmpty{[]},
 		METAGENOMICS.out.kraken2_report.collect{it[1]}.ifEmpty{[]},
 		ch_reproducibility_peaks_branched.idr.collect{it[1]}.ifEmpty{[]},
