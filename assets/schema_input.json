@@ -66,6 +66,16 @@
 				"meta": [
 					"adapter_2"
 				]
+			},
+			"subsample_prop": {
+				"errorMessage": "Subsample proportion must be a number between 0 and 1",
+				"type": "number",
+				"default": 1,
+				"minimum": 0,
+				"maximum": 1,
+				"meta": [
+					"subsample_prop"
+				]
 			}
 		},
 		"required": [

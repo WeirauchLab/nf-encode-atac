@@ -15,7 +15,11 @@ extra_fn_clean_exts:
   - "_fingerprint.tab"
   - ".nodup"
 
+thousandsSep_format: ','
+
 report_section_order:
+  seqkit:
+    order: 1010
   fastp:
     order: 1000
   bowtie2:

@@ -4,6 +4,7 @@ include { GAWK_READLENGTHS                } from '../../modules/local/gawk/readl
 include { FASTQC as FASTQC_RAW            } from '../../modules/nf-core/fastqc/main'
 include { FASTQC as FASTQC_TRIMMED        } from '../../modules/nf-core/fastqc/main'
 include { FASTP_FASTP                     } from '../../modules/local/fastp/fastp/main'
+include { SEQKIT_SAMPLE                   } from '../../modules/local/seqkit/sample/main'
 
 workflow PREPARE_FASTQ {
 	take:
@@ -30,17 +31,31 @@ workflow PREPARE_FASTQ {
 		.mix(ch_fastq_branched.single)
 		.set {ch_fastq_concat}
 	
-	FASTQC_RAW(ch_fastq_concat)
+	ch_fastq_concat
+		| branch {meta, fq ->
+			subsample: meta.subsample_prop < 1
+			no_subsample: meta.subsample_prop == 1
+		}
+		| set {ch_fastq_subsample_branches}
+
+	ch_seqkit_tsv = Channel.empty()
+	SEQKIT_SAMPLE(ch_fastq_subsample_branches.subsample)
+	SEQKIT_SAMPLE.out.fastq
+		.mix(ch_fastq_subsample_branches.no_subsample)
+		.set {ch_fastq_concat_subsampled}
+	ch_seqkit_tsv = SEQKIT_SAMPLE.out.tsv
+
+	FASTQC_RAW(ch_fastq_concat_subsampled)
 	
 	if(skip_adapter_trimming) {
 		ch_fastp_json         = Channel.empty()
 		ch_fastp_html         = Channel.empty()
 		ch_fastqc_trimmed     = Channel.empty()
 		ch_fastqc_trimmed_zip = Channel.empty()
-		ch_fastq_output	      = ch_fastq_concat
+		ch_fastq_output	      = ch_fastq_concat_subsampled
 	} else {
 		FASTP_FASTP(
-			ch_fastq_concat
+			ch_fastq_concat_subsampled
 		)
         ch_fastq_output = FASTP_FASTP.out.fastq
 		ch_fastp_json = FASTP_FASTP.out.json
@@ -57,6 +72,7 @@ workflow PREPARE_FASTQ {
 	ch_fastp_json        >> "fastp"
 	ch_fastp_html        >> "fastp"
 	ch_fastq_output      >> (save_trimmed_fastq ? "fastq/trimmed" : null)
+	ch_seqkit_tsv        >> "seqkit"
 
 	emit:
 	fastq              = ch_fastq_output
@@ -64,5 +80,5 @@ workflow PREPARE_FASTQ {
 	fastqc_trimmed_zip = ch_fastqc_trimmed_zip
 	fastp_json         = ch_fastp_json
 	fastp_html         = ch_fastp_html
-
+	seqkit_tsv         = ch_seqkit_tsv
 }
