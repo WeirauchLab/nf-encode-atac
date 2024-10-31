@@ -125,6 +125,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "fastp uses overlap analysis to trim PE reads by default. Enabling this will force fastp to use adapter detection instead."
+                },
+                "seqkit_seed": {
+                    "type": "integer",
+                    "default": 12345,
+                    "description": "Seed for random number generator in seqkit."
                 }
             }
         },

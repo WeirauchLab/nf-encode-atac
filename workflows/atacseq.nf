@@ -216,6 +216,7 @@ workflow ATACSEQ {
 		PREPARE_FASTQ.out.fastqc_raw_zip.collect{it[1]}.ifEmpty{[]},
 		PREPARE_FASTQ.out.fastp_json.collect{it[1]}.ifEmpty{[]},
 		PREPARE_FASTQ.out.fastqc_trimmed_zip.collect{it[1]}.ifEmpty{[]},
+		PREPARE_FASTQ.out.seqkit_tsv.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.bowtie2_log.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.filtered_flagstat.collect{it[1]}.ifEmpty{[]},
 		ENCODE.out.picard_metrics.collect{it[1]}.ifEmpty{[]},

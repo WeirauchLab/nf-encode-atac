@@ -10,6 +10,7 @@ process MULTIQC {
     path "data/fastqc/raw/*"
     path "data/fastp/*"
     path "data/fastqc/trimmed/*"
+    path "data/seqkit/*"
     path "data/bowtie2_align/*"
     path "data/samtools_flagstat/filtered/*"
     path "data/picard_markduplicates/*"
