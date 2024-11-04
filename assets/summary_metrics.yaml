@@ -1,0 +1,158 @@
+definitions: 
+  - 
+    file: multiqc_samtools_flagstat.txt
+    cols: 
+      total_passed: Usable Reads
+  - 
+    file: multiqc_bowtie2.txt
+    cols: 
+      total_reads: Reads After Filtering
+      overall_alignment_rate: "% Aligned"
+  - 
+    file: multiqc_fastqc_fastqc_raw.txt
+    use_sample: read1
+    cols: 
+      Total Sequences: Raw Reads
+    dtype: 
+      Total Sequences: Int64
+  - 
+    file: multiqc_markdup.txt
+    cols: 
+      duplicate_rate: "% Duplication"
+  - 
+    file: multiqc_encode_peakstats.txt
+    cols: 
+      group: Group
+      total_peaks: Peaks (Raw)
+      frip: FRIP (Raw)
+  - 
+    file: multiqc_encode_peak_consistency_idr.txt
+    cols: 
+      total_peaks: Peaks (IDR)
+      frip: FRIP (IDR)
+  - 
+    file: multiqc_encode_peak_consistency_overlap.txt
+    cols: 
+      total_peaks: Peaks (Overlap)
+      frip: FRIP (Overlap)
+  - 
+    file: multiqc_phantompeakqualtools.txt
+    cols: 
+      Estimated_Fragment_Length_bp: Est Frag Len
+  - 
+    file: multiqc_general_stats.txt
+    cols: 
+      fastp-pct_adapter: "% Adapter"
+      kraken-pct_top_one: "% Best Organism"
+  - 
+    file: deeptools_plot_fingerprint_metrics.txt
+    cols: 
+      Synthetic JS Distance: JS Distance (Syn)
+  -
+    file: multiqc_tss_enrichment_score.txt
+    cols:
+      score: TSS Enrichment
+order:
+  - Group
+  - Raw Reads
+  - "% Adapter"
+  - Reads After Filtering
+  - "% Aligned"
+  - Usable Reads
+  - "% Best Organism"
+  - "% Duplication"
+  - JS Distance (Syn)
+  - TSS Enrichment
+  - Est Frag Len
+  - Peaks (Raw)
+  - FRIP (Raw)
+  - Peaks (IDR)
+  - FRIP (IDR)
+  - Peaks (Overlap)
+  - FRIP (Overlap)
+display:
+  Raw Reads:
+    commify: True
+  "% Adapter":
+    precision: 2
+  Reads After Filtering:
+    commify: True
+  "% Aligned":
+    precision: 2
+    colorscale:
+      start:
+        type: num
+        val: 90
+        fill: F8696B
+      mid:
+        type: num
+        val: 95
+        fill: FFEB84
+      end:
+        type: num
+        val: 100
+        fill: 63BE7B
+  Usable Reads:
+    commify: True
+    highlight:
+      operator: lessThan
+      value: 50000000
+      fill: FFC7CE
+  "% Best Organism":
+    precision: 2
+  "% Duplication":
+    precision: 2
+    colorscale:
+      start:
+        fill: 92CDDC
+        type: min
+      end:
+        fill: DA9694
+        type: max
+  JS Distance (Syn):
+    precision: 2
+  TSS Enrichment:
+    precision: 3
+    highlight:
+      operator: lessThan
+      value: 10
+      fill: FFC7CE
+  Peaks (Raw):
+    commify: True
+  FRIP (Raw):
+    precision: 4
+  Peaks (IDR):
+    commify: True
+    # Want to highlight cells that are >33% different than median of group
+    # for instance, for cells B14:D14 use this formula:
+    # OR(B14 < MEDIAN($B$14:$D$14)*0.666, B14 > MEDIAN($B$14:$D$14)*1.333)
+  FRIP (IDR):
+    precision: 4
+  Peaks (Overlap):
+    commify: True
+  FRIP (Overlap):
+    precision: 4
+  "IDR Cons # Peaks":
+    commify: True
+  IDR Cons Top P(log10):
+    precision: 1
+  IDR Cons Key P(log10):
+    precision: 1
+  "IDR Opt # Peaks":
+    commify: True
+  IDR Opt Top P(log10):
+    precision: 1
+  IDR Opt Key P(log10):
+    precision: 1
+  "Overlap Cons # Peaks":
+    commify: True
+  Overlap Cons Top P(log10):
+    precision: 1
+  Overlap Cons Key P(log10):
+    precision: 1
+  "Overlap Opt # Peaks":
+    commify: True
+  Overlap Opt Top P(log10):
+    precision: 1
+  Overlap Opt Key P(log10):
+    precision: 1
