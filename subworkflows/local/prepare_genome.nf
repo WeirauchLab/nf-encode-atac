@@ -94,5 +94,5 @@ workflow PREPARE_GENOME {
 
 	publish:
 	ch_bowtie2_index >> (save_reference ? "genome/bowtie2" : null)
-	ch_tss           >> "genome/"
+	ch_tss           >> "genome"
 }
