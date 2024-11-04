@@ -130,6 +130,11 @@
                     "type": "integer",
                     "default": 12345,
                     "description": "Seed for random number generator in seqkit."
+                },
+                "save_subsampled_fastq": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Save fastq files after subsampling. Only files that are subsampled will be saved."
                 }
             }
         },
