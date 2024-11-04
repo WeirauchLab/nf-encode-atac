@@ -111,7 +111,8 @@ workflow ATACSEQ {
 	PREPARE_FASTQ(
 		ch_input,
 		params.skip_adapter_trimming,
-		params.save_trimmed_fastq
+		params.save_trimmed_fastq,
+		params.save_subsampled_fastq
 	)
 
 	ENCODE(
