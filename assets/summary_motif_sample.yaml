@@ -1,0 +1,17 @@
+aCTCF+EBNA1: 
+  - CTCF
+aCTCF+RTA: 
+  - CTCF
+aCTCF+ZTA: 
+  - CTCF
+aRBPJ+EBNA2: 
+  - RBPJ
+aRBPJ+RTA: 
+  - RBPJ
+aRBPJ+ZTA: 
+  - RBPJ
+ZTA:
+  - FOS
+  - JUN
+EBNA2:
+  - RBPJ
