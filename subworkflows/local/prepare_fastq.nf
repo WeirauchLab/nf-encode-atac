@@ -11,6 +11,7 @@ workflow PREPARE_FASTQ {
 	ch_fastq              // [ [meta], [fastq1, fastq2] ]
 	skip_adapter_trimming // boolean
 	save_trimmed_fastq	  // boolean
+	save_subsampled_fastq // boolean
 
 	main:
 
@@ -39,8 +40,11 @@ workflow PREPARE_FASTQ {
 		| set {ch_fastq_subsample_branches}
 
 	ch_seqkit_tsv = Channel.empty()
+	ch_subsampled_fastq = Channel.empty()
 	SEQKIT_SAMPLE(ch_fastq_subsample_branches.subsample)
-	SEQKIT_SAMPLE.out.fastq
+	ch_subsampled_fastq = SEQKIT_SAMPLE.out.fastq
+
+	ch_subsampled_fastq
 		.mix(ch_fastq_subsample_branches.no_subsample)
 		.set {ch_fastq_concat_subsampled}
 	ch_seqkit_tsv = SEQKIT_SAMPLE.out.tsv
@@ -73,6 +77,7 @@ workflow PREPARE_FASTQ {
 	ch_fastp_html        >> "fastp"
 	ch_fastq_output      >> (save_trimmed_fastq ? "fastq/trimmed" : null)
 	ch_seqkit_tsv        >> "seqkit"
+	ch_subsampled_fastq  >> (save_subsampled_fastq ? "fastq/subsampled" : null)
 
 	emit:
 	fastq              = ch_fastq_output
