@@ -93,6 +93,18 @@
                     "mimetype": "text/plain",
                     "description": "Path to TSS bed file.",
                     "help_text": ""
+                },
+                "gtf_tss_filters": {
+                    "type": "string",
+                    "default": "type:gene,gene_type:protein_coding",
+                    "description": "Filters to apply to GTF file for TSS enrichment in the format of <meta1>:<value1>,<meta2>:<value1>:<value2>. Meta values represent the tags in the annotation information, but also can include the following: type, seqnames, strand",
+                    "help_text": ""
+                },
+                "gtf_tss_id_col": {
+                    "type": "string",
+                    "default": "gene_id",
+                    "description": "Column in GTF file to use as the ID for TSS enrichment. Set to null if not applicable.",
+                    "help_text": ""
                 }
             }
         },
@@ -384,15 +396,6 @@
                     "type": "number",
                     "default": 0,
                     "description": "Pseudocount to add to TSS enrichment signal."
-                },
-                "tsse_feature": {
-                    "type": "string",
-                    "default": "gene",
-                    "description": "Feature to use for TSS enrichment.",
-                    "enum": [
-                        "gene",
-                        "transcript"
-                    ]
                 }
             }
         },

@@ -19,6 +19,15 @@ This pipeline generates several different files as output.
 
 If enabled, this will save the Bowtie2 indices for the genome that were built.
 
+### TSS Regions
+
+```bash
+├── genome
+│   └── *_tss.bed
+```
+
+If TSS regions were extracted from the GTF, they will be saved here.
+
 ### FASTQC
 
 ```bash
