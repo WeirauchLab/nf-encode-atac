@@ -4,8 +4,7 @@ library(argparse)
 
 parser <- ArgumentParser()
 parser$add_argument("--bam")
-parser$add_argument("--gtf")
-parser$add_argument("--feature", default = "gene", type = "character")
+parser$add_argument("--bed")
 parser$add_argument("--upstream", default = 2000, type = "numeric")
 parser$add_argument("--downstream", default = 2000, type = "numeric")
 parser$add_argument("--width", default = 100, type = "numeric")
@@ -20,14 +19,9 @@ opt <- parser$parse_args()
 library(tidyverse)
 library(rtracklayer)
 library(ATACseqQC)
-library(plyranges)
 library(jsonlite)
 
-gtf <- import.gff2(opt$gtf)
-regions <-
-    gtf |>
-    plyranges::filter(type == opt$feature)
-
+regions <- import.bed(opt$bed)
 bam <- readBamFile(bamFile = opt$bam, tag = character(0), asMates = opt$paired, bigFile = T)
 
 tss_score <-
@@ -61,14 +55,11 @@ tss_output <-
         params = opt
     )
 
-
 write_csv(
     tss_signal,
     paste0(opt$prefix, "_tss_signal.csv"),
     col_names = TRUE
 )
-
-
 
 write_json(
     x = tss_output,
