@@ -14,7 +14,7 @@ process TSS_EXTRACT {
     tuple val(meta), path("*.bed"), emit: bed
 
     script:
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.id}_tss"
     def args = task.ext.args ?: ""
     """
     tss_extract.R \\

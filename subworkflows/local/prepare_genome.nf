@@ -32,10 +32,10 @@ workflow PREPARE_GENOME {
 	if (!gtf){
 		ch_gtf = channel.value([[:],[]])
 	} else if (gtf.endsWith('.gz')){
-		GUNZIP_GTF([[id: file(gtf).simpleName ], file(gtf) ])
+		GUNZIP_GTF([[id: file(gtf).baseName.replaceFirst(/\.gtf(\.gz)?$/,"") ], file(gtf) ])
 		ch_gtf = GUNZIP_GTF.out.gunzip
 	} else {
-		ch_gtf = channel.value([ [id: file(gtf).simpleName ], file(gtf) ])
+		ch_gtf = channel.value([ [id: file(gtf).baseName.replaceFirst(/\.gtf(\.gz)?$/,"") ], file(gtf) ])
 	}
 
 	// generate chr sizes file if necessary
@@ -80,7 +80,7 @@ workflow PREPARE_GENOME {
 		TSS_EXTRACT(ch_gtf)
 		ch_tss = TSS_EXTRACT.out.bed
 	} else {
-		ch_tss = channel.value([ [id: file(tss_bed).simpleName ], file(tss_bed) ])
+		ch_tss = channel.value([ [id: file(tss_bed).baseName.replaceFirst(/\.bed$/,"") ], file(tss_bed) ])
 	}
 
 	emit:
