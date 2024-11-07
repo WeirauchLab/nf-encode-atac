@@ -46,15 +46,16 @@ It is HIGHLY recommended that a parameters file is created as well. This can be 
 
 The samplesheet is a CSV file that contains the following columns:
 
-| Column     | Required | Description                                                      |
-| ---------- | -------- | ---------------------------------------------------------------- |
-| id         | Yes      | The sample ID                                                    |
-| group      | Yes      | A group name. Anything matching this gets treated as a replicate |
-| control_id | No       | The ID of the control group                                      |
-| fastq_1    | Yes      | The path to the first fastq file                                 |
-| fastq_2    | No       | The path to the second fastq file                                |
-| adapter_1  | No       | adapter sequence to trim for read 1. automatic if not supplied   |
-| adapter_2  | No       | adapter sequence to trim for read 2. automatic if not supplied   |
+| Column         | Required | Description                                                                                                                                       |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| id             | Yes      | The sample ID                                                                                                                                     |
+| group          | Yes      | A group name. Anything matching this gets treated as a replicate                                                                                  |
+| control_id     | No       | The ID of the control group                                                                                                                       |
+| fastq_1        | Yes      | The path to the first fastq file                                                                                                                  |
+| fastq_2        | No       | The path to the second fastq file                                                                                                                 |
+| adapter_1      | No       | adapter sequence to trim for read 1. automatic if not supplied                                                                                    |
+| adapter_2      | No       | adapter sequence to trim for read 2. automatic if not supplied                                                                                    |
+| subsample_prop | No       | Can be a value between 0 and 1. If supplied, reads will be downsampled to X proportion of the original number. Ex: 0.6 will keep 60% of the reads |
 
 A note about adapters:
 
@@ -90,6 +91,31 @@ The group name for these samples should be `CTCF_TREATED`.
 #### What is a control?
 
 TODO: Add description
+
+### TSS information
+
+A pre-defined TSS bed file can be supplied using the `tss_bed` parameter. This file should be a bed file with a minimum of 3 columns: `chrom`, `start`, and `end`. The pipeline will use this file to extract TSS regions for the genome.
+
+If a TSS file is not supplied (the default), then TSS regions will be extracted from the GTF file.
+The regions included as a TSS are defined by the `gtf_tss_filters` parameter.
+By default, the following filters are applied:
+
+- `type`: `gene`
+- `gene_type`: `protein_coding`
+
+The parameter for this looks like: `"gtf_tss_filters": "type:gene,gene_type:protein_coding"`
+
+`type` is a "special" column that is not found in the annotation string of the GTF file.
+Rather, this represents the feature column (column 3) of the GTF file.
+It is named `type` as `rtracklayer` / `GenomicRanges` uses this name for the feature column.
+
+The structure for this string is `<META>:<VALUE>,<META2>:<VALUE1>:<VALUE2>,...` where `<META>` is the metadata field in the GTF file and `<VALUE>` is the value to filter on.
+Multiple values can be supplied for a single metadata field by separating them with a colon.
+Meta fields are separated by commas.
+Fields that are not found are ignored with a warning.
+
+An additional parameter, `gtf_tss_id_col`, can be supplied to name the output TSS regions.
+By default, this is set to `gene_id`. Set this to `null` will not assign an ID to the TSS regions.
 
 ## Run execution
 
