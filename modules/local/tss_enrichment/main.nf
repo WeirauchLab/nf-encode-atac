@@ -10,7 +10,7 @@ process TSS_ENRICHMENT {
 
 	input:
 	tuple val(meta), path(bam)
-	tuple val(meta2), path(gtf)
+	tuple val(meta2), path(tss)
 
 	output:
 	tuple val(meta), path("*_tss_enrichment.json"), optional: false, emit: json
@@ -26,7 +26,7 @@ process TSS_ENRICHMENT {
 	"""
 	tsse.R \\
 		--bam ${bam} \\
-		--gtf ${gtf} \\
+		--bed ${tss} \\
 		--prefix ${prefix} \\
 		${args}
 	"""

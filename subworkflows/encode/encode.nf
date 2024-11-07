@@ -25,6 +25,7 @@ workflow ENCODE {
 	ch_fasta
 	ch_fai
 	ch_gtf
+	ch_tss
 	ch_gensz
 	ch_bowtie2_index
 	mapq_threshold
@@ -78,7 +79,7 @@ workflow ENCODE {
 
 	TSS_ENRICHMENT(
 		ch_filtered_bam,
-		ch_gtf
+		ch_tss
 	)
 
 	LIB_QC(

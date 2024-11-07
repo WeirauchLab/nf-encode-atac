@@ -120,6 +120,7 @@ workflow ATACSEQ {
 		PREPARE_GENOME.out.genome_fasta,
 		PREPARE_GENOME.out.genome_fai,
 		PREPARE_GENOME.out.gtf,
+		PREPARE_GENOME.out.tss,
 		PREPARE_GENOME.out.gensz,
 		PREPARE_GENOME.out.bowtie2_index,
 		params.mapq_threshold ? params.mapq_threshold : [],
