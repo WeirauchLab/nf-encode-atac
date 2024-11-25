@@ -254,7 +254,7 @@ def main(args):
         supertrack.add_tracks_w_pattern(
             pattern=args.encode_bigwig,
             track_type=BigWigTrack,
-            visibility="full",
+            visibility="hide",
             color="0,0,0",
         )
         hub.add_track(supertrack)
