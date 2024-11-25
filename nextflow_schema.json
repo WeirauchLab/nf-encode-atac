@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/WeirauchLab/nf-encode-atac/master/nextflow_schema.json",
-    "title": " pipeline parameters",
+    "title": "WeirauchLab/nf-encode-atac parameters",
     "description": "",
     "type": "object",
     "defs": {
@@ -38,8 +38,8 @@
                     "exists": true,
                     "mimetype": "text/plain",
                     "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
-                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row."
+                    "description": "Path to fasta file containing the genome sequence.",
+                    "help_text": "Fasta files can be in .fa or .fasta format, and optionally gzipped."
                 },
                 "genome": {
                     "type": "string",
@@ -260,8 +260,8 @@
                 },
                 "encode_macs2_ext_args": {
                     "type": "string",
-                    "default": "-f BED -p 0.01 --nomodel --keep-dup all -B --SPMR",
-                    "description": "Arguments passed to MACS2 by ENCODE when calling peaks. Fragment length is automatically calculated."
+                    "default": "-f BED -p 0.01 --nomodel --keep-dup all",
+                    "description": "Arguments passed to MACS2 by ENCODE when calling peaks. To enable ENCODE's signal tracks, add '-B --SPMR' to this."
                 },
                 "encode_macs2_ext_size": {
                     "type": "integer",
