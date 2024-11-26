@@ -317,6 +317,11 @@
                     "default": 0.05,
                     "description": "IDR threshold to use."
                 },
+                "idr_extra_args": {
+                    "type": "string",
+                    "default": "--use-best-multisummit-IDR",
+                    "description": "Extra arguments to pass to IDR."
+                },
                 "skip_idr": {
                     "type": "boolean",
                     "default": false,
