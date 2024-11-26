@@ -138,6 +138,11 @@
                     "default": false,
                     "description": "fastp uses overlap analysis to trim PE reads by default. Enabling this will force fastp to use adapter detection instead."
                 },
+                "fastp_extra_args": {
+                    "type": "string",
+                    "default": "--trim_poly_x",
+                    "description": "Extra arguments to pass to fastp. Adapter options are specified in the other parameters, but you could add them here."
+                },
                 "seqkit_seed": {
                     "type": "integer",
                     "default": 12345,
