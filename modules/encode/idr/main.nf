@@ -23,6 +23,7 @@ process IDR_PEAKS {
 	def available_ranks = ["signal.value": 7, "p.value": 8, "q.value": 9]
 	def rank_id = available_ranks[rank]
 	def negative_log10_thresh = -Math.log10(idr_threshold)
+	def args = task.ext.args ?: ""
 	"""
 	mkdir tmp_matplotlib
 	export MPLCONFIGDIR=tmp_matplotlib
@@ -34,7 +35,8 @@ process IDR_PEAKS {
 		--output-file ${prefix}.unthresholded-peaks.txt \\
 		--rank ${rank} \\
 		--soft-idr-threshold ${idr_threshold} \\
-		--plot
+		--plot \\
+		${args}
 
 	if [ \$? -eq 0 ]; then
 		mv ${prefix}.unthresholded-peaks.txt.png ${prefix}.unthresholded-peaks.png

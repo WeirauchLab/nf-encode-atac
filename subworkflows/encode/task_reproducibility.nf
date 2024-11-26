@@ -107,7 +107,7 @@ workflow TASK_REPRODUCIBILITY {
 
 	ch_idr_peaks             = Channel.empty()
 	ch_overlap_peaks         = Channel.empty()
-	
+	ch_idr_plots			 = Channel.empty()
 	if(!skip_idr){
 		ch_peak_combos
 			.map{meta, peak1, peak2, peak3 ->
@@ -121,6 +121,7 @@ workflow TASK_REPRODUCIBILITY {
 			idr_threshold
 		)
 		ch_idr_peaks = IDR_PEAKS.out.narrowPeak
+		ch_idr_plots = IDR_PEAKS.out.png
 	}
 	
 	if(!skip_overlap){
@@ -189,6 +190,7 @@ workflow TASK_REPRODUCIBILITY {
 	ch_reproducible_peaks_branched.idr_conservative     >> "encode/macs2/idr"
 	ch_reproducible_peaks_branched.overlap_optimal      >> "encode/macs2/overlap"
 	ch_reproducible_peaks_branched.overlap_conservative >> "encode/macs2/overlap"
+	ch_idr_plots										>> "encode/macs2/idr"
 
 	emit:
 	idr_peaks            = ch_idr_peaks
