@@ -25,6 +25,7 @@ process SAMBAMBA_MARKDUP {
 	sambamba markdup \\
 		--nthreads ${task.cpus} \\
 		--show-progress \\
+		--tmpdir ./ \\
 		${args} \\
 		${bam} \\
 		${prefix}_markdup.bam \\
