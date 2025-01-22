@@ -35,7 +35,7 @@ process HOMER_FINDMOTIFSGENOME {
 		${motif_lib ? "-mknown ${motif_lib}" : ""} \\
 		${args}
 	
-	tar -cvf ${prefix}.tar.gz ${prefix}
+	tar -zcvf ${prefix}.tar.gz ${prefix}
 
 	if [ -f "${prefix}/homerResults.html" ]; then 
 		cp "${prefix}/homerResults.html" ${prefix}_homerResults.html
