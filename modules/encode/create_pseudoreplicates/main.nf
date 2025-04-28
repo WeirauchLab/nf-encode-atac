@@ -1,8 +1,8 @@
 process CREATE_PSEUDOREPS {
 	tag "${meta.id}"
-	cpus   = {1 * task.attempt}
-	memory = {16.GB * task.attempt}
-	time   = {3.h * task.attempt}
+	cpus { 1 * task.attempt }
+	memory { 16.GB * task.attempt }
+	time { 3.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/python:3.12.3--827621ec7ad46bfc"
@@ -15,7 +15,7 @@ process CREATE_PSEUDOREPS {
 	tuple val(meta), path("*.tagAlign.gz"), optional: false, emit: tagAlign
 	tuple val(meta), path("*pr1.tagAlign.gz"), optional: false, emit: pr1
 	tuple val(meta), path("*pr2.tagAlign.gz"), optional: false, emit: pr2
-	tuple val(task.process), val("python")    , eval("python --version | sed 's/Python //'")                  , topic: versions
+	tuple val(task.process), val("python"), eval("python --version | sed 's/Python //'"), topic: versions
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"
