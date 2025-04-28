@@ -1,7 +1,0 @@
-name: data_prep
-channels:
-  - conda-forge
-  - bioconda
-dependencies:
-  - bioconda::samtools
-  - bioconda::bedtools
