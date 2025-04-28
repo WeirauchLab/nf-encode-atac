@@ -1,4 +1,3 @@
-
 // based on nf-cores untar module
 // https://github.com/nf-core/rnaseq/blob/master/modules/nf-core/untar/main.nf
 
@@ -15,7 +14,7 @@ process TAR_UNTAR {
 	tuple val(meta), path("${prefix}"), optional: true, emit: contents
 
 	script:
-	def prefix = task.ext.prefix ?: (meta.id ? "${meta.id}" : tar.baseName.toString().replaceFirst(/(\.tar|\.tar\.gz)$, "") )
+	prefix = task.ext.prefix ?: (meta.id ? "${meta.id}" : tar.baseName.toString().replaceFirst(/(\.tar|\.tar\.gz)$/, ""))
 	def args = task.ext.args ?: ""
 	"""
 	tar \\
