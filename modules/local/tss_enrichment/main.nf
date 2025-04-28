@@ -1,9 +1,9 @@
 process TSS_ENRICHMENT {
 	tag "${meta.id}"
 
-	cpus   = {1 * task.attempt}
-	memory = {24.GB * task.attempt}
-	time   = {4.h * task.attempt}
+	cpus { 1 * task.attempt }
+	memory { 24.GB * task.attempt }
+	time { 4.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/bioconductor-atacseqqc_bioconductor-plyranges_bioconductor-rtracklayer_r-argparse_r-tidyverse:564087ec8e3130e1"
@@ -14,11 +14,7 @@ process TSS_ENRICHMENT {
 
 	output:
 	tuple val(meta), path("*_tss_enrichment.json"), optional: false, emit: json
-	tuple val(meta), path("*_tss_signal.csv")     , optional: false, emit: csv
-
-	// version strings
-	//TODO: add version outputs
-	//tuple val(task.process), val("tool") , eval("tool --version"), topic: versions
+	tuple val(meta), path("*_tss_signal.csv"), optional: false, emit: csv
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"

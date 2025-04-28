@@ -1,8 +1,8 @@
 process RUN_SPP {
 	tag "${meta.id}"
-	cpus   = {1 * task.attempt}
-	memory = {24.GB * task.attempt}
-	time   = {10.h * task.attempt}
+	cpus { 1 * task.attempt }
+	memory { 24.GB * task.attempt }
+	time { 10.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/phantompeakqualtools:1.2.2--f8026fe2526a5e18"
@@ -12,8 +12,8 @@ process RUN_SPP {
 	val mito_chr_name
 
 	output:
-	tuple val(meta), path("*.spp.out")  , optional: false, emit: spp, topic: spp_log
-	tuple val(meta), path("*.spp.pdf")  , optional: false, emit: pdf
+	tuple val(meta), path("*.spp.out"), optional: false, emit: spp, topic: spp_log
+	tuple val(meta), path("*.spp.pdf"), optional: false, emit: pdf
 	tuple val(meta), path("*.spp.Rdata"), optional: false, emit: rdata
 	tuple val(task.process), val("phantompeakqualtools"), val("1.2.2"), topic: versions
 

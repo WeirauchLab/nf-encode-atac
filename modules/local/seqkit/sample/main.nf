@@ -1,9 +1,9 @@
 process SEQKIT_SAMPLE {
 	tag "${meta.id}"
 
-	cpus   = {4 * task.attempt}
-	memory = {16.GB * task.attempt}
-	time   = {4.h * task.attempt}
+	cpus { 4 * task.attempt }
+	memory { 16.GB * task.attempt }
+	time { 4.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/seqkit:2.8.2--7c9bea727f240b8e"
@@ -16,7 +16,7 @@ process SEQKIT_SAMPLE {
 	tuple val(meta), path("*.tsv"), optional: false, emit: tsv
 
 	// version strings
-	tuple val(task.process), val("seqkit") , eval("seqkit version | sed 's/seqkit v//'"), topic: versions
+	tuple val(task.process), val("seqkit"), eval("seqkit version | sed 's/seqkit v//'"), topic: versions
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"
@@ -37,7 +37,8 @@ process SEQKIT_SAMPLE {
 			${prefix}.sub.fastq.gz \\
 		> ${prefix}_stats.tsv
 		"""
-	} else {
+	}
+	else {
 		"""
 		seqkit sample \\
 			-o ${prefix}_1.sub.fastq.gz \\
@@ -62,5 +63,4 @@ process SEQKIT_SAMPLE {
 
 		"""
 	}
-	
 }
