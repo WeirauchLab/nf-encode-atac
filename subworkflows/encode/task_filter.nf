@@ -9,61 +9,64 @@ include { MTNUCRATIO_MTNUCRATIO           } from "../../modules/local/mtnucratio
 
 workflow TASK_FILTER {
 	take:
-	ch_bam              // channel: [ val(meta), path(bam) ]
-	mapq_threshold      // integer or []
-	markdup_method      // "picard" or "sambamba"
-	skip_rm_lowq_reads  // boolean
-	skip_rm_duplicates  // boolean
-	save_filtered_bam   // boolean
+	ch_bam                        // channel: [ val(meta), path(bam) ]
+	mapq_threshold                // integer or []
+	markdup_method                // "picard" or "sambamba"
+	skip_rm_lowq_reads            // boolean
+	skip_rm_duplicates            // boolean
+	save_filtered_bam             // boolean
 	skip_collectinsertsizemetrics // boolean
 	ch_mito_chr_name              // string
 
-
 	main:
-	
-	if(!skip_rm_lowq_reads && mapq_threshold) {
+
+	if (!skip_rm_lowq_reads && mapq_threshold) {
 		RM_LOWQ_READS(
 			ch_bam,
-			mapq_threshold
+			mapq_threshold,
 		)
 		ch_lowq_filtered = RM_LOWQ_READS.out.bam
-	} else {
+	}
+	else {
 		ch_lowq_filtered = ch_bam
 	}
 
 	ch_picard_metrics = Channel.empty()
-	ch_sambamba_log   = Channel.empty()
-	ch_markdup        = Channel.empty()
-	if(markdup_method == "picard"){
+	ch_sambamba_log = Channel.empty()
+	ch_markdup = Channel.empty()
+	if (markdup_method == "picard") {
 		PICARD_MARKDUPLICATES(
 			ch_lowq_filtered
 		)
-		ch_markdup        = PICARD_MARKDUPLICATES.out.bam
+		ch_markdup = PICARD_MARKDUPLICATES.out.bam
 		ch_picard_metrics = PICARD_MARKDUPLICATES.out.metrics
-	} else if (markdup_method == "sambamba") {
+	}
+	else if (markdup_method == "sambamba") {
 		SAMBAMBA_MARKDUP(
 			ch_lowq_filtered
 		)
-		ch_markdup      = SAMBAMBA_MARKDUP.out.bam
+		ch_markdup = SAMBAMBA_MARKDUP.out.bam
 		ch_sambamba_log = SAMBAMBA_MARKDUP.out.log
-	} else {
+	}
+	else {
 		ch_markdup = ch_lowq_filtered
 	}
 
-	if(!skip_rm_duplicates) {
+	if (!skip_rm_duplicates) {
 		RM_DUPLICATES(
 			ch_markdup
 		)
 		ch_filtered = RM_DUPLICATES.out.bam
-	} else {
+	}
+	else {
 		ch_filtered = ch_markdup
 	}
 
 	ch_insertsizes = Channel.empty()
 	ch_insertsizes_histogram = Channel.empty()
-	if(!skip_collectinsertsizemetrics){
+	if (!skip_collectinsertsizemetrics) {
 		ch_filtered
-			| filter{meta, bam -> !meta.single_end}
+			| filter { meta, bam -> !meta.single_end }
 			| PICARD_COLLECTINSERTSIZEMETRICS
 		ch_insertsizes = PICARD_COLLECTINSERTSIZEMETRICS.out.insertsizes
 		ch_insertsizes_histogram = PICARD_COLLECTINSERTSIZEMETRICS.out.histogram
@@ -71,9 +74,9 @@ workflow TASK_FILTER {
 
 	ch_mtnuc_json = Channel.empty()
 	ch_mtnuc_ratio = Channel.empty()
-	if(ch_mito_chr_name){
+	if (ch_mito_chr_name) {
 		MTNUCRATIO_MTNUCRATIO(ch_filtered, ch_mito_chr_name)
-		ch_mtnuc_json  = MTNUCRATIO_MTNUCRATIO.out.json
+		ch_mtnuc_json = MTNUCRATIO_MTNUCRATIO.out.json
 		ch_mtnuc_ratio = MTNUCRATIO_MTNUCRATIO.out.mtnucratio
 	}
 
@@ -82,27 +85,26 @@ workflow TASK_FILTER {
 
 	SAMTOOLS_FLAGSTAT(ch_filtered)
 
-	publish:
-	ch_filtered                    >> (save_filtered_bam ? "encode/alignments/filtered" : null)
-	ch_filtered_bai                >> (save_filtered_bam ? "encode/alignments/filtered" : null)
-	ch_picard_metrics              >> "encode/logs/picard_metrics"
-	ch_insertsizes                 >> "encode/picard"
-	ch_insertsizes_histogram       >> "encode/picard"
-	ch_mtnuc_json                  >> "encode/mtnucratio"
-	ch_mtnuc_ratio                 >> "encode/mtnucratio"
-	ch_sambamba_log                >> "encode/logs/sambamba_markdup"
-	SAMTOOLS_FLAGSTAT.out.flagstat >> "encode/alignments/flagstats/filtered"
-
 	emit:
-	bam            = ch_filtered
-	bai            = ch_filtered_bai
-	picard_metrics = ch_picard_metrics
-	sambamba_log   = ch_sambamba_log
-	flagstat       = SAMTOOLS_FLAGSTAT.out.flagstat
-	markdup_bam	   = ch_markdup
+	bam              = ch_filtered
+	bai              = ch_filtered_bai
+	picard_metrics   = ch_picard_metrics
+	sambamba_log     = ch_sambamba_log
+	flagstat         = SAMTOOLS_FLAGSTAT.out.flagstat
+	markdup_bam      = ch_markdup
 	insertsizes      = ch_insertsizes
 	insert_histogram = ch_insertsizes_histogram
 	mtnuc_json       = ch_mtnuc_json
 	mtnuc_ratio      = ch_mtnuc_ratio
 
+	publish:
+	ch_filtered >> (save_filtered_bam ? "encode/alignments/filtered" : null)
+	ch_filtered_bai >> (save_filtered_bam ? "encode/alignments/filtered" : null)
+	ch_picard_metrics >> "encode/logs/picard_metrics"
+	ch_insertsizes >> "encode/picard"
+	ch_insertsizes_histogram >> "encode/picard"
+	ch_mtnuc_json >> "encode/mtnucratio"
+	ch_mtnuc_ratio >> "encode/mtnucratio"
+	ch_sambamba_log >> "encode/logs/sambamba_markdup"
+	SAMTOOLS_FLAGSTAT.out.flagstat >> "encode/alignments/flagstats/filtered"
 }

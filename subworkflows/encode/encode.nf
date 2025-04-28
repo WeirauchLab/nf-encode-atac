@@ -1,4 +1,3 @@
-
 include { DEEPTOOLS_PLOTFINGERPRINT               } from "../../modules/local/deeptools/plotFingerprint/main"
 include { FILTER_PEAKS                            } from "../../modules/encode/filter_peaks/main"
 include { LIB_QC                                  } from "../../modules/encode/lib_qc/main"
@@ -6,17 +5,17 @@ include { CALC_PEAKSTATS as CALC_PEAKSTATS_REPRO  } from '../../modules/encode/c
 include { CALC_PEAKSTATS as CALC_PEAKSTATS_SAMPLE } from '../../modules/encode/calc_peakstats/main'
 include { TSS_ENRICHMENT                          } from '../../modules/local/tss_enrichment/main'
 
-include { TASK_ALIGN               } from './task_align.nf'
-include { TASK_FILTER              } from './task_filter.nf'
-include { TASK_TAGALIGN            } from './task_tagalign.nf'
-include { TASK_XCORR               } from './task_xcorr.nf'
-include { TASK_MACS2               } from './task_macs2.nf'
-include { TASK_REPRODUCIBILITY     } from './task_reproducibility.nf'
+include { TASK_ALIGN                              } from './task_align.nf'
+include { TASK_FILTER                             } from './task_filter.nf'
+include { TASK_TAGALIGN                           } from './task_tagalign.nf'
+include { TASK_XCORR                              } from './task_xcorr.nf'
+include { TASK_MACS2                              } from './task_macs2.nf'
+include { TASK_REPRODUCIBILITY                    } from './task_reproducibility.nf'
 
 
 
-def subset_peak_meta(peak_channel, meta_keys){
-	peak_channel.map{meta, peak -> [meta.subMap(meta_keys), peak]}
+def subset_peak_meta(peak_channel, meta_keys) {
+	peak_channel.map { meta, peak -> [meta.subMap(meta_keys), peak] }
 }
 
 workflow ENCODE {
@@ -58,11 +57,11 @@ workflow ENCODE {
 		ch_fasta,
 		aligner,
 		ch_bowtie2_index,
-		skip_align
+		skip_align,
 	)
-	ch_bam_aligned       = TASK_ALIGN.out.bam
+	ch_bam_aligned = TASK_ALIGN.out.bam
 	ch_bam_aligned_index = TASK_ALIGN.out.bai
-	ch_bowtie2_log       = TASK_ALIGN.out.bowtie2_log
+	ch_bowtie2_log = TASK_ALIGN.out.bowtie2_log
 
 	TASK_FILTER(
 		ch_bam_aligned,
@@ -72,14 +71,14 @@ workflow ENCODE {
 		skip_rm_duplicates,
 		save_filtered_bam,
 		skip_collectinsertsizemetrics,
-		ch_mito_chr_name
+		ch_mito_chr_name,
 	)
 	ch_filtered_bam = TASK_FILTER.out.bam
 	ch_filtered_bam_bai = TASK_FILTER.out.bam.join(TASK_FILTER.out.bai, by: 0)
 
 	TSS_ENRICHMENT(
 		ch_filtered_bam,
-		ch_tss
+		ch_tss,
 	)
 
 	LIB_QC(
@@ -92,13 +91,13 @@ workflow ENCODE {
 		skip_pseudoreplication,
 		save_sample_tagalign,
 		save_pr_tagalign,
-		save_pooled_tagalign
+		save_pooled_tagalign,
 	)
 	ch_tagalign = TASK_TAGALIGN.out.tagAlign
 
 	TASK_XCORR(
 		ch_tagalign,
-		ch_mito_chr_name
+		ch_mito_chr_name,
 	)
 	ch_tagalign_w_fraglen = TASK_XCORR.out.tagAlign
 
@@ -107,17 +106,18 @@ workflow ENCODE {
 		ch_tagalign_w_fraglen,
 		ch_fai,
 		ch_gensz,
-		max_peaks
+		max_peaks,
 	)
 
 	// TASK postproc_peaks
-	if(skip_peak_filtering){
+	if (skip_peak_filtering) {
 		ch_peaks_filtered = TASK_MACS2.out.narrowPeak
-	} else {
+	}
+	else {
 		FILTER_PEAKS(
 			TASK_MACS2.out.narrowPeak,
 			ch_exclusion_peaks,
-			ch_chr_filter
+			ch_chr_filter,
 		)
 		ch_peaks_filtered = FILTER_PEAKS.out.narrowPeak
 	}
@@ -128,7 +128,7 @@ workflow ENCODE {
 		ch_idr_threshold_col,
 		ch_idr_threshold,
 		skip_idr,
-		skip_overlap
+		skip_overlap,
 	)
 
 	// Peak stats
@@ -142,62 +142,46 @@ workflow ENCODE {
 		| mix(TASK_REPRODUCIBILITY.out.idr_optimal)
 		| mix(TASK_REPRODUCIBILITY.out.overlap_conservative)
 		| mix(TASK_REPRODUCIBILITY.out.overlap_optimal)
-		| map{meta, peaks ->
+		| map { meta, peaks ->
 			[meta.group, meta, peaks]
 		}
 		| combine(
-			ch_tagalign_w_fraglen
-				| filter{ meta, ta -> meta.sample_type == "pooled" && !meta.pr_rep }
-				| map{ meta, ta ->[meta.group, ta] },
+			ch_tagalign_w_fraglen | filter { meta, ta -> meta.sample_type == "pooled" && !meta.pr_rep } | map { meta, ta -> [meta.group, ta] },
 			by: 0
 		)
-		| map{it -> it[1..-1]}
-		| set{ch_rep_peaks_prepared}
+		| map { it -> it[1..-1] }
+		| set { ch_rep_peaks_prepared }
 
 	TASK_REPRODUCIBILITY.out.idr_peaks
 		| mix(TASK_REPRODUCIBILITY.out.overlap_peaks)
-		| filter{meta, peaks -> meta.sample_type == "sample"}
-		| map{meta, peaks ->
+		| filter { meta, peaks -> meta.sample_type == "sample" }
+		| map { meta, peaks ->
 			meta.id = "${meta.id}"
 			[meta.sample_id, meta, peaks]
 		}
 		| combine(
-			ch_tagalign_w_fraglen
-				| filter{meta, ta -> meta.sample_type == "sample"}
-				| map{meta, ta -> [meta.sample_id, ta]},
+			ch_tagalign_w_fraglen | filter { meta, ta -> meta.sample_type == "sample" } | map { meta, ta -> [meta.sample_id, ta] },
 			by: 0
 		)
-		| map{it -> it[1..-1]}
-		| set{ch_sample_consistency_peaks_w_tagalign}
-	
+		| map { it -> it[1..-1] }
+		| set { ch_sample_consistency_peaks_w_tagalign }
+
 	CALC_PEAKSTATS_SAMPLE(ch_sample_consistency_peaks_w_tagalign)
 	ch_peakstats_sample
 		| mix(CALC_PEAKSTATS_SAMPLE.out.peakstats)
-		| set{ch_peakstats_sample}
+		| set { ch_peakstats_sample }
 
 	Channel.empty()
 		| mix(
-			ch_peaks_filtered
-				| map{meta, peak ->[meta.id, meta, peak]}
-				| join(ch_tagalign_w_fraglen.map{meta, ta ->[meta.id, ta]}, by: 0)
-				| map{it -> it[1..-1]}
+			ch_peaks_filtered | map { meta, peak -> [meta.id, meta, peak] } | join(ch_tagalign_w_fraglen.map { meta, ta -> [meta.id, ta] }, by: 0) | map { it -> it[1..-1] }
 		)
 		| mix(ch_rep_peaks_prepared)
-		| set{ch_peakstats_input}
-	
+		| set { ch_peakstats_input }
+
 	CALC_PEAKSTATS_REPRO(ch_peakstats_input)
 	ch_peakstats_repro
 		| mix(CALC_PEAKSTATS_REPRO.out.peakstats)
-		| set{ch_peakstats_repro}
-
-
-	
-
-
-	publish:
-	ch_peaks_filtered		  >> "encode/macs2/filtered"
-	LIB_QC.out.tsv            >> "encode/lib_qc"
-	TSS_ENRICHMENT.out        >> "encode/tss_enrichment"
+		| set { ch_peakstats_repro }
 
 	emit:
 	bam_aligned                 = TASK_ALIGN.out.bam
@@ -231,4 +215,9 @@ workflow ENCODE {
 	peakstats_sample            = ch_peakstats_sample
 	tss_enrichment_json         = TSS_ENRICHMENT.out.json
 	tss_enrichment_csv          = TSS_ENRICHMENT.out.csv
+
+	publish:
+	ch_peaks_filtered >> "encode/macs2/filtered"
+	LIB_QC.out.tsv >> "encode/lib_qc"
+	TSS_ENRICHMENT.out >> "encode/tss_enrichment"
 }
