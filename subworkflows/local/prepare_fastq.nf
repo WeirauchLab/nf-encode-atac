@@ -9,8 +9,6 @@ workflow PREPARE_FASTQ {
 	take:
 	ch_fastq              // [ [meta], [fastq1, fastq2] ]
 	skip_adapter_trimming // boolean
-	save_trimmed_fastq    // boolean
-	save_subsampled_fastq // boolean
 
 	main:
 
@@ -71,19 +69,11 @@ workflow PREPARE_FASTQ {
 	}
 
 	emit:
+	subsampled_fastq   = ch_subsampled_fastq
 	fastq              = ch_fastq_output
 	fastqc_raw_zip     = FASTQC_RAW.out.zip
 	fastqc_trimmed_zip = ch_fastqc_trimmed_zip
 	fastp_json         = ch_fastp_json
 	fastp_html         = ch_fastp_html
 	seqkit_tsv         = ch_seqkit_tsv
-
-	publish:
-	FASTQC_RAW.out >> "fastqc/raw"
-	ch_fastqc_trimmed >> "fastqc/trimmed"
-	ch_fastp_json >> "fastp"
-	ch_fastp_html >> "fastp"
-	ch_fastq_output >> (save_trimmed_fastq ? "fastq/trimmed" : null)
-	ch_seqkit_tsv >> "seqkit"
-	ch_subsampled_fastq >> (save_subsampled_fastq ? "fastq/subsampled" : null)
 }

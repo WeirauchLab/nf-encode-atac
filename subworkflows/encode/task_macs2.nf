@@ -17,14 +17,13 @@ workflow TASK_MACS2 {
 
 	ch_macs2_input = Channel.empty()
 	ch_tagalign
-		| filter { meta, ta -> meta.sample_type == "pooled" }
-		| set { ch_pooled_ta }
+		.filter { meta, ta -> meta.sample_type == "pooled" }
+		.set { ch_pooled_ta }
+
+	ch_tagalign.map { meta, ta -> [meta.sample_id, meta.sample_type, meta.pr_rep, ta] }
 
 	ch_tagalign
-		| map { meta, ta -> [meta.sample_id, meta.sample_type, meta.pr_rep, ta] }
-
-	ch_tagalign
-		| branch { meta, ta ->
+		.branch { meta, ta ->
 			no_ctrl: !meta.control_sample_id && !meta.control_group_id
 			[meta, ta, []]
 			sample_w_sample_ctrl: meta.control_sample_id
@@ -32,28 +31,28 @@ workflow TASK_MACS2 {
 			sample_w_group_ctrl: !meta.control_sample_id && meta.control_group_id
 			[[meta.control_group_id, meta.pr_rep], meta, ta]
 		}
-		| set { ch_tagalign_branches }
+		.set { ch_tagalign_branches }
 
 	ch_tagalign_branches.sample_w_group_ctrl
-		| combine(
+		.combine(
 			ch_pooled_ta.map { meta, ta -> [[meta.group, meta.pr_rep], ta] },
 			by: 0
 		)
-		| map { group_keys, meta, target_ta, control_ta -> [meta, target_ta, control_ta] }
-		| set { ch_sample_w_group_ctrl_inputs }
+		.map { group_keys, meta, target_ta, control_ta -> [meta, target_ta, control_ta] }
+		.set { ch_sample_w_group_ctrl_inputs }
 
 	ch_tagalign_branches.sample_w_sample_ctrl
-		| combine(
+		.combine(
 			ch_tagalign.map { meta, ta -> [[meta.sample_id, meta.sample_type, meta.pr_rep], ta] },
 			by: 0
 		)
-		| map { group_keys, meta, target_ta, control_ta -> [meta, target_ta, control_ta] }
-		| set { ch_sample_w_sample_ctrl_inputs }
+		.map { group_keys, meta, target_ta, control_ta -> [meta, target_ta, control_ta] }
+		.set { ch_sample_w_sample_ctrl_inputs }
 
 	ch_tagalign_branches.no_ctrl
-		| mix(ch_sample_w_sample_ctrl_inputs)
-		| mix(ch_sample_w_group_ctrl_inputs)
-		| set { ch_macs2_input }
+		.mix(ch_sample_w_sample_ctrl_inputs)
+		.mix(ch_sample_w_group_ctrl_inputs)
+		.set { ch_macs2_input }
 
 	MACS2_CALLPEAK(
 		ch_macs2_input,
@@ -85,9 +84,4 @@ workflow TASK_MACS2 {
 	narrowPeak  = ch_narrowPeak
 	fc_bigwig   = ch_fc_bigwig
 	pval_bigwig = ch_pval_bigwig
-
-	publish:
-	ch_narrowPeak >> "encode/macs2/raw"
-	ch_fc_bigwig >> "encode/macs2/signal"
-	ch_pval_bigwig >> "encode/macs2/signal"
 }
