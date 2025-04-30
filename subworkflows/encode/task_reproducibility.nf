@@ -2,10 +2,6 @@ include { IDR_PEAKS              } from '../../modules/encode/idr/main'
 include { OVERLAP_PEAKS          } from '../../modules/encode/overlap/main'
 include { ENCODE_REPRODUCIBILITY } from '../../modules/encode/reproducibility/main'
 
-def subset_peak_meta(peak_channel, meta_keys) {
-	peak_channel.map { meta, peak -> [meta.subMap(meta_keys), peak] }
-}
-
 //def generateCombinationPairs(list) {
 //	def combos = []
 //	for (i in 0..<list.size()) {
@@ -17,11 +13,9 @@ def subset_peak_meta(peak_channel, meta_keys) {
 //}
 
 def generateCombinationPairs(list) {
-	list
-		.withIndex()
-		.collectMany { item, i ->
-			list[(i + 1)..-1].collect { j -> [item, j] }
-		}
+	def combos = [list, list].combinations()
+	combos = combos.findAll { it[0] < it[1] }
+	return combos
 }
 
 workflow TASK_REPRODUCIBILITY {
