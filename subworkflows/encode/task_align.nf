@@ -35,9 +35,4 @@ workflow TASK_ALIGN {
 	bai         = ch_bai
 	bowtie2_log = ch_bowtie2_log
 	flagstat    = SAMTOOLS_FLAGSTAT.out.flagstat
-
-	publish:
-	ch_bam >> "encode/alignments/raw"
-	ch_bowtie2_log >> "encode/logs/bowtie2"
-	SAMTOOLS_FLAGSTAT.out.flagstat >> "encode/alignments/flagstats/aligned"
 }

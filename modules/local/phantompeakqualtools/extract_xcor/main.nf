@@ -15,7 +15,6 @@ process EXTRACT_XCOR {
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"
-	def args = task.ext.args ?: ""
 	"""
 	#!/usr/bin/env Rscript
 

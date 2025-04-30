@@ -15,7 +15,6 @@ process POOL_TA {
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"
-	def args = task.ext.args ?: ""
 	"""
 	cat ${tagAlign} > ${prefix}.tagAlign.gz
 	"""

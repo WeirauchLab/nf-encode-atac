@@ -14,7 +14,6 @@ workflow TASK_FILTER {
 	markdup_method                // "picard" or "sambamba"
 	skip_rm_lowq_reads            // boolean
 	skip_rm_duplicates            // boolean
-	save_filtered_bam             // boolean
 	skip_collectinsertsizemetrics // boolean
 	ch_mito_chr_name              // string
 
@@ -86,25 +85,14 @@ workflow TASK_FILTER {
 	SAMTOOLS_FLAGSTAT(ch_filtered)
 
 	emit:
-	bam              = ch_filtered
-	bai              = ch_filtered_bai
-	picard_metrics   = ch_picard_metrics
-	sambamba_log     = ch_sambamba_log
-	flagstat         = SAMTOOLS_FLAGSTAT.out.flagstat
-	markdup_bam      = ch_markdup
-	insertsizes      = ch_insertsizes
-	insert_histogram = ch_insertsizes_histogram
-	mtnuc_json       = ch_mtnuc_json
-	mtnuc_ratio      = ch_mtnuc_ratio
-
-	publish:
-	ch_filtered >> (save_filtered_bam ? "encode/alignments/filtered" : null)
-	ch_filtered_bai >> (save_filtered_bam ? "encode/alignments/filtered" : null)
-	ch_picard_metrics >> "encode/logs/picard_metrics"
-	ch_insertsizes >> "encode/picard"
-	ch_insertsizes_histogram >> "encode/picard"
-	ch_mtnuc_json >> "encode/mtnucratio"
-	ch_mtnuc_ratio >> "encode/mtnucratio"
-	ch_sambamba_log >> "encode/logs/sambamba_markdup"
-	SAMTOOLS_FLAGSTAT.out.flagstat >> "encode/alignments/flagstats/filtered"
+	bam                   = ch_filtered
+	bai                   = ch_filtered_bai
+	picard_metrics        = ch_picard_metrics
+	sambamba_log          = ch_sambamba_log
+	flagstat              = SAMTOOLS_FLAGSTAT.out.flagstat
+	markdup_bam           = ch_markdup
+	insertsizes           = ch_insertsizes
+	insertsizes_histogram = ch_insertsizes_histogram
+	mtnuc_json            = ch_mtnuc_json
+	mtnuc_ratio           = ch_mtnuc_ratio
 }
