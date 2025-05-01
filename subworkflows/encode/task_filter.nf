@@ -18,16 +18,16 @@ workflow TASK_FILTER {
 	ch_mito_chr_name              // string
 
 	main:
-
+	ch_lowq_filtered = Channel.empty()
 	if (!skip_rm_lowq_reads && mapq_threshold) {
 		RM_LOWQ_READS(
 			ch_bam,
 			mapq_threshold,
 		)
-		ch_lowq_filtered = RM_LOWQ_READS.out.bam
+		ch_lowq_filtered = ch_lowq_filtered.mix(RM_LOWQ_READS.out.bam)
 	}
 	else {
-		ch_lowq_filtered = ch_bam
+		ch_lowq_filtered = ch_lowq_filtered.mix(ch_bam)
 	}
 
 	ch_picard_metrics = Channel.empty()
@@ -37,35 +37,35 @@ workflow TASK_FILTER {
 		PICARD_MARKDUPLICATES(
 			ch_lowq_filtered
 		)
-		ch_markdup = PICARD_MARKDUPLICATES.out.bam
+		ch_markdup = ch_markdup.mix(PICARD_MARKDUPLICATES.out.bam)
 		ch_picard_metrics = PICARD_MARKDUPLICATES.out.metrics
 	}
 	else if (markdup_method == "sambamba") {
 		SAMBAMBA_MARKDUP(
 			ch_lowq_filtered
 		)
-		ch_markdup = SAMBAMBA_MARKDUP.out.bam
+		ch_markdup = ch_markdup.mix(SAMBAMBA_MARKDUP.out.bam)
 		ch_sambamba_log = SAMBAMBA_MARKDUP.out.log
 	}
 	else {
-		ch_markdup = ch_lowq_filtered
+		ch_markdup = ch_markdup.mix(ch_lowq_filtered)
 	}
 
+	ch_filtered = Channel.empty()
 	if (!skip_rm_duplicates) {
 		RM_DUPLICATES(
 			ch_markdup
 		)
-		ch_filtered = RM_DUPLICATES.out.bam
+		ch_filtered = ch_filtered.mix(RM_DUPLICATES.out.bam)
 	}
 	else {
-		ch_filtered = ch_markdup
+		ch_filtered = ch_filtered.mix(ch_markdup)
 	}
 
 	ch_insertsizes = Channel.empty()
 	ch_insertsizes_histogram = Channel.empty()
 	if (!skip_collectinsertsizemetrics) {
-		ch_filtered
-			| filter { meta, bam -> !meta.single_end }
+		ch_filtered.filter { meta, _bam -> !meta.single_end }
 			| PICARD_COLLECTINSERTSIZEMETRICS
 		ch_insertsizes = PICARD_COLLECTINSERTSIZEMETRICS.out.insertsizes
 		ch_insertsizes_histogram = PICARD_COLLECTINSERTSIZEMETRICS.out.histogram
