@@ -1,29 +1,29 @@
 process MACS2_BDGCMP {
 	tag "${meta.id}"
-	cpus   = {1 * task.attempt}
-	memory = {32.GB * task.attempt}
-	time   = {8.h * task.attempt}
+	cpus { 1 * task.attempt }
+	memory { 32.GB * task.attempt }
+	time { 8.h * task.attempt }
 
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/bedtools_macs2_ucsc-bedgraphtobigwig:831ad901e42b7721"
 
 	input:
-	tuple val(meta) , path(treat_pileup), path(control_lambda), path(tagalign), val(scale_factor)
+	tuple val(meta), path(treat_pileup), path(control_lambda), path(tagalign), val(scale_factor)
 	tuple val(meta2), path(fai)
 
 	output:
-	tuple val(meta), path("*.fc.signal.bigwig")  , optional: false, emit: fc_bigwig
+	tuple val(meta), path("*.fc.signal.bigwig"), optional: false, emit: fc_bigwig
 	tuple val(meta), path("*.pval.signal.bigwig"), optional: false, emit: pval_bigwig
-	tuple val(task.process), val("macs2")   , eval("macs2 --version | head -n 1 | sed 's/macs2 //'")                , topic: versions
-	tuple val(task.process), val("bedtools"), eval("bedtools --version | sed 's/bedtools v//'")                     , topic: versions
-	tuple val(task.process), val("awk")     , eval("awk -Wversion | sed '1!d; s/.*Awk //; s/,.*//'")                , topic: versions
-	tuple val(task.process), val("bedGraphToBigWig"), eval("bedGraphToBigWig 2>&1 | head -n 1 | sed 's/bedGraphToBigWig v //;s/ -.*//'") , topic: versions
+	tuple val(task.process), val("macs2"), eval("macs2 --version | head -n 1 | sed 's/macs2 //'"), topic: versions
+	tuple val(task.process), val("bedtools"), eval("bedtools --version | sed 's/bedtools v//'"), topic: versions
+	tuple val(task.process), val("awk"), eval("awk -Wversion | sed '1!d; s/.*Awk //; s/,.*//'"), topic: versions
+	tuple val(task.process), val("bedGraphToBigWig"), eval("bedGraphToBigWig 2>&1 | head -n 1 | sed 's/bedGraphToBigWig v //;s/ -.*//'"), topic: versions
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"
 	def args = task.ext.args ?: ""
-	
+
 	"""
 	macs2 bdgcmp \\
 		-t ${treat_pileup} \\

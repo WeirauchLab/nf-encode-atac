@@ -1,9 +1,9 @@
 process LIB_QC {
 	tag "${meta.id}"
 
-	cpus   = {1 * task.attempt}
-	memory = {24.GB * task.attempt}
-	time   = {4.h * task.attempt}
+	cpus { 1 * task.attempt }
+	memory { 24.GB * task.attempt }
+	time { 4.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/bedtools_samtools_coreutils_gawk:35ad44d2da724fcb"
@@ -15,15 +15,15 @@ process LIB_QC {
 	tuple val(meta), path("*.lib_qc.tsv"), optional: true, emit: tsv
 
 	// version strings
-	tuple val(task.process), val("bedtools"), eval("bedtools --version | sed 's/bedtools v//'")            , topic: versions
-	tuple val(task.process), val("awk")     , eval("awk -Wversion | sed '1!d; s/.*Awk //; s/,.*//'")       , topic: versions
+	tuple val(task.process), val("bedtools"), eval("bedtools --version | sed 's/bedtools v//'"), topic: versions
+	tuple val(task.process), val("awk"), eval("awk -Wversion | sed '1!d; s/.*Awk //; s/,.*//'"), topic: versions
 	tuple val(task.process), val("samtools"), eval("samtools --version | head -n 1 | sed 's/^samtools //'"), topic: versions
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"
 	def args = task.ext.args ?: ""
 	def chr_filter = task.ext.chr_filter ? "| grep -v '^${task.ext.chr_filter}\\s'" : ""
-	if(meta.single_end){
+	if (meta.single_end) {
 		"""
 		bedtools bamtobed -i ${bam} \\
 			| awk 'BEGIN{OFS="\\t"}{print \$1,\$2,\$3,\$6}' \\
@@ -44,7 +44,8 @@ process LIB_QC {
 				' \\
 			> ${prefix}.lib_qc.tsv
 		"""
-	} else {
+	}
+	else {
 		"""
 		samtools sort -n ${bam} \\
 			| bedtools bamtobed -bedpe -i - \\

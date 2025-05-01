@@ -1,8 +1,8 @@
 process BOWTIE2_BUILD {
 	tag "${meta.id}"
-	cpus   = {16 * task.attempt}
-	memory = {16.GB * task.attempt}
-	time   = {2.h * task.attempt}
+	cpus { 16 * task.attempt }
+	memory { 16.GB * task.attempt }
+	time { 2.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/bowtie2_samtools:5ffb83f41ffa0c0e"
@@ -12,7 +12,7 @@ process BOWTIE2_BUILD {
 
 	output:
 	tuple val(meta), path("*.bt2"), optional: false, emit: index
-	tuple val(task.process), val("bowtie2") , eval("bowtie2 --version | head -n 1 | sed 's/^.*version //'") , topic: versions
+	tuple val(task.process), val("bowtie2"), eval("bowtie2 --version | head -n 1 | sed 's/^.*version //'"), topic: versions
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"

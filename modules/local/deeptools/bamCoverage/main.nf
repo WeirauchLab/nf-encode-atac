@@ -1,9 +1,9 @@
 process DEEPTOOLS_BAMCOVERAGE {
 	tag "${meta.id}"
 
-	cpus   = {4 * task.attempt}
-	memory = {12.GB * task.attempt}
-	time   = {2.h * task.attempt}
+	cpus { 4 * task.attempt }
+	memory { 12.GB * task.attempt }
+	time { 2.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/deeptools:3.5.5--0929777992a8c4c6"

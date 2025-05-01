@@ -1,23 +1,23 @@
 process BOWTIE2_ALIGN {
 	tag "${meta.id}"
-	cpus   = {16 * task.attempt}
-	memory = {64.GB * task.attempt}
-	time   = {12.h * task.attempt}
+	cpus { 16 * task.attempt }
+	memory { 64.GB * task.attempt }
+	time { 12.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/bowtie2_samtools:5ffb83f41ffa0c0e"
 
 	input:
-	tuple val(meta) , path(fastq)
+	tuple val(meta), path(fastq)
 	tuple val(meta2), path(fasta)
 	tuple val(meta3), path(index)
 
 	output:
-	tuple val(meta), path("*.bam")        , optional: false, emit: bam
-	tuple val(meta), path("*.bai")        , optional: false, emit: bai
+	tuple val(meta), path("*.bam"), optional: false, emit: bam
+	tuple val(meta), path("*.bai"), optional: false, emit: bai
 	tuple val(meta), path("*.bowtie2.log"), optional: false, emit: log, topic: bowtie2_align_log
-	tuple val(task.process), val("bowtie2") , eval("bowtie2 --version | head -n 1 | sed 's/^.*version //'") , topic: versions
-	tuple val(task.process), val("samtools"), eval("samtools --version | head -n 1 | sed 's/^samtools //'") , topic: versions
+	tuple val(task.process), val("bowtie2"), eval("bowtie2 --version | head -n 1 | sed 's/^.*version //'"), topic: versions
+	tuple val(task.process), val("samtools"), eval("samtools --version | head -n 1 | sed 's/^samtools //'"), topic: versions
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"

@@ -1,22 +1,22 @@
 process UCSC_BEDTOBIGBED {
 	tag "${meta.id}"
 
-	cpus   = {1 * task.attempt}
-	memory = {8.GB * task.attempt}
-	time   = {1.h * task.attempt}
+	cpus { 1 * task.attempt }
+	memory { 8.GB * task.attempt }
+	time { 1.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/ucsc-bedtobigbed:447--8d104b03cb049be4"
 
 	input:
-	tuple val(meta) , path(bed)
+	tuple val(meta), path(bed)
 	tuple val(meta2), path(fai)
 
 	output:
 	tuple val(meta), path("*.bb"), optional: true, emit: bigbed
 
 	// version strings
-	tuple val(task.process), val("bedToBigBed") , eval("bedToBigBed 2>&1 | head -n1 | sed 's/bedToBigBed v. //;s/ -.*//'"), topic: versions
+	tuple val(task.process), val("bedToBigBed"), eval("bedToBigBed 2>&1 | head -n1 | sed 's/bedToBigBed v. //;s/ -.*//'"), topic: versions
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"
