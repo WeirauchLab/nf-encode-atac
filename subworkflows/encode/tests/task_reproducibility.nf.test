@@ -1,0 +1,34 @@
+
+nextflow_function {
+
+    name "Test Functions"
+    script "subworkflows/encode/task_reproducibility.nf"
+
+	
+
+    test("Test Function generateCombinationPairs") {
+
+        function "generateCombinationPairs"
+
+        when {
+            function {
+                """
+                // define inputs of the function here. Example:
+                input[0] = ["rep1","rep2","rep3"]
+                """
+            }
+        }
+
+        then {
+            assert function.success
+            assert snapshot(function.result).match()
+            assert function.result.size() == 3
+        }
+
+    }
+
+	
+
+	
+
+}

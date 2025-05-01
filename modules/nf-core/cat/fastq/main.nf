@@ -1,20 +1,20 @@
 process CAT_FASTQ {
-    tag "$meta.id"
-    cpus   = {1 * task.attempt}
-	memory = {16.GB * task.attempt}
-	time   = {2.h * task.attempt}
+    tag "${meta.id}"
+    cpus { 1 * task.attempt }
+    memory { 16.GB * task.attempt }
+    time { 2.h * task.attempt }
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/ubuntu:20.04' :
-        'quay.io/nf-core/ubuntu:20.04' }"
+    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
+        ? 'https://depot.galaxyproject.org/singularity/ubuntu:20.04'
+        : 'quay.io/nf-core/ubuntu:20.04'}"
 
     input:
     tuple val(meta), path(reads, stageAs: "input*/*")
 
     output:
     tuple val(meta), path("*.merged.fastq.gz"), emit: reads
-    tuple val(task.process), val("cat") , eval("cat --version | sed -n 's/^cat (GNU coreutils) //p'") , topic: versions
+    tuple val(task.process), val("cat"), eval("cat --version | sed -n 's/^cat (GNU coreutils) //p'"), topic: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -22,7 +22,7 @@ process CAT_FASTQ {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def readList = reads instanceof List ? reads.collect{ it.toString() } : [reads.toString()]
+    def readList = reads instanceof List ? reads.collect { it.toString() } : [reads.toString()]
     if (meta.single_end) {
         if (readList.size >= 1) {
             """
@@ -30,11 +30,12 @@ process CAT_FASTQ {
 
             """
         }
-    } else {
+    }
+    else {
         if (readList.size >= 2) {
             def read1 = []
             def read2 = []
-            readList.eachWithIndex{ v, ix -> ( ix & 1 ? read2 : read1 ) << v }
+            readList.eachWithIndex { v, ix -> (ix & 1 ? read2 : read1) << v }
             """
             cat ${read1.join(' ')} > ${prefix}_1.merged.fastq.gz
             cat ${read2.join(' ')} > ${prefix}_2.merged.fastq.gz
@@ -45,7 +46,7 @@ process CAT_FASTQ {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def readList = reads instanceof List ? reads.collect{ it.toString() } : [reads.toString()]
+    def readList = reads instanceof List ? reads.collect { it.toString() } : [reads.toString()]
     if (meta.single_end) {
         if (readList.size > 1) {
             """
@@ -57,7 +58,8 @@ process CAT_FASTQ {
             END_VERSIONS
             """
         }
-    } else {
+    }
+    else {
         if (readList.size > 2) {
             """
             touch ${prefix}_1.merged.fastq.gz
@@ -70,5 +72,4 @@ process CAT_FASTQ {
             """
         }
     }
-
 }

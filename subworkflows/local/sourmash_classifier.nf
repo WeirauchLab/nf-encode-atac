@@ -14,9 +14,4 @@ workflow SOURMASH_CLASSIFIER {
 	emit:
 	sketch = SOURMASH_SKETCH.out.sketch
 	csv    = SOURMASH_GATHER.out.csv
-
-	publish:
-	SOURMASH_SKETCH.out.sketch >> 'metagenomics/sourmash'
-	SOURMASH_GATHER.out.csv    >> 'metagenomics/sourmash'
-
 }

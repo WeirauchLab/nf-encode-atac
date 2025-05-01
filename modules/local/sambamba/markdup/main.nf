@@ -1,9 +1,9 @@
 process SAMBAMBA_MARKDUP {
 	tag "${meta.id}"
 
-	cpus   = {6 * task.attempt}
-	memory = {24.GB * task.attempt}
-	time   = {3.h * task.attempt}
+	cpus { 6 * task.attempt }
+	memory { 24.GB * task.attempt }
+	time { 3.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/sambamba:1.0.1--18aa51da0053469f"
@@ -16,7 +16,7 @@ process SAMBAMBA_MARKDUP {
 	tuple val(meta), path("*.markdup.log"), optional: false, emit: log
 
 	// version strings
-	tuple val(task.process), val("sambamba") , eval("sambamba --version 2>&1 | awk '/sambamba/{print \$2;exit}'"), topic: versions
+	tuple val(task.process), val("sambamba"), eval("sambamba --version 2>&1 | awk '/sambamba/{print \$2;exit}'"), topic: versions
 
 	script:
 	def prefix = task.ext.prefix ?: "${meta.id}"

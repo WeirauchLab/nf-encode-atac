@@ -1,0 +1,25 @@
+{
+    "Test Function generateCombinationPairs": {
+        "content": [
+            [
+                [
+                    "rep1",
+                    "rep2"
+                ],
+                [
+                    "rep1",
+                    "rep3"
+                ],
+                [
+                    "rep2",
+                    "rep3"
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.4"
+        },
+        "timestamp": "2025-04-30T09:45:15.387448914"
+    }
+}

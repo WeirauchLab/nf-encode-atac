@@ -1,55 +1,57 @@
-
-include { GZIP_GUNZIP as GUNZIP_GENOME        } from '../../modules/local/gzip/gunzip/main'
-include { GZIP_GUNZIP as GUNZIP_GTF           } from '../../modules/local/gzip/gunzip/main'
-include { GZIP_GUNZIP as GUNZIP_BL_PEAKS      } from '../../modules/local/gzip/gunzip/main'
-include { SAMTOOLS_FAIDX                      } from '../../modules/local/samtools/faidx/main'
-include { SAMTOOLS_FAIDX_CHR                  } from '../../modules/local/samtools/faidx_chr/main'
-include { BOWTIE2_BUILD                       } from '../../modules/local/bowtie2/build/main'
-include { UNTAR as UNTAR_BOWTIE2_INDEX        } from '../../modules/nf-core/untar/main'
-include { TSS_EXTRACT                         } from '../../modules/local/tss_extract/main'
+include { GZIP_GUNZIP as GUNZIP_GENOME   } from '../../modules/local/gzip/gunzip/main'
+include { GZIP_GUNZIP as GUNZIP_GTF      } from '../../modules/local/gzip/gunzip/main'
+include { GZIP_GUNZIP as GUNZIP_BL_PEAKS } from '../../modules/local/gzip/gunzip/main'
+include { SAMTOOLS_FAIDX                 } from '../../modules/local/samtools/faidx/main'
+include { SAMTOOLS_FAIDX_CHR             } from '../../modules/local/samtools/faidx_chr/main'
+include { BOWTIE2_BUILD                  } from '../../modules/local/bowtie2/build/main'
+include { UNTAR as UNTAR_BOWTIE2_INDEX   } from '../../modules/nf-core/untar/main'
+include { TSS_EXTRACT                    } from '../../modules/local/tss_extract/main'
 
 workflow PREPARE_GENOME {
 	take:
-	genome_fasta     // string
-	gtf              // string
-	gensz            // int or string
-	bowtie2_index    // string
-	exclusion_peaks  // string
-	save_reference   // boolean
-	tss_bed          // string
+	genome_fasta    // string
+	gtf             // string
+	gensz           // int or string
+	bowtie2_index   // string
+	exclusion_peaks // string
+	tss_bed         // string
 
 	main:
-	
+
 	// unzip genome fasta
-	if (genome_fasta.endsWith('.gz')){
-		GUNZIP_GENOME([[id: file(genome_fasta).simpleName ], file(genome_fasta) ])
+	if (genome_fasta.endsWith('.gz')) {
+		GUNZIP_GENOME([[id: file(genome_fasta).simpleName], file(genome_fasta)])
 		ch_genome_fasta = GUNZIP_GENOME.out.gunzip
-	} else {
-		ch_genome_fasta = channel.value([ [id: file(genome_fasta).simpleName ], file(genome_fasta) ])
+	}
+	else {
+		ch_genome_fasta = channel.value([[id: file(genome_fasta).simpleName], file(genome_fasta)])
 	}
 
 	// unzip gtf file if necessary
-	if (!gtf){
-		ch_gtf = channel.value([[:],[]])
-	} else if (gtf.endsWith('.gz')){
-		GUNZIP_GTF([[id: file(gtf).baseName.replaceFirst(/\.gtf(\.gz)?$/,"") ], file(gtf) ])
+	if (!gtf) {
+		ch_gtf = channel.value([[:], []])
+	}
+	else if (gtf.endsWith('.gz')) {
+		GUNZIP_GTF([[id: file(gtf).baseName.replaceFirst(/\.gtf(\.gz)?$/, "")], file(gtf)])
 		ch_gtf = GUNZIP_GTF.out.gunzip
-	} else {
-		ch_gtf = channel.value([ [id: file(gtf).baseName.replaceFirst(/\.gtf(\.gz)?$/,"") ], file(gtf) ])
+	}
+	else {
+		ch_gtf = channel.value([[id: file(gtf).baseName.replaceFirst(/\.gtf(\.gz)?$/, "")], file(gtf)])
 	}
 
 	// generate chr sizes file if necessary
 	SAMTOOLS_FAIDX(ch_genome_fasta)
-	ch_genome_fai  = SAMTOOLS_FAIDX.out.fai
+	ch_genome_fai = SAMTOOLS_FAIDX.out.fai
 
 	if (!gensz) {
 		ch_genome_fai
-			| map {it -> it[1]}
+			| map { it -> it[1] }
 			| splitCsv(sep: "\t")
-			| map { it -> it[1].toLong()}
+			| map { it -> it[1].toLong() }
 			| reduce { sum, x -> sum + x }
-			| set {ch_gensz}
-	} else {
+			| set { ch_gensz }
+	}
+	else {
 		ch_gensz = channel.value(gensz)
 	}
 
@@ -60,39 +62,40 @@ workflow PREPARE_GENOME {
 	if (!bowtie2_index) {
 		BOWTIE2_BUILD(ch_genome_fasta)
 		ch_bowtie2_index = BOWTIE2_BUILD.out.index
-	} else if ( bowtie2_index.endsWith('.tar.gz') || bowtie2_index.endsWith('.tar') ) {
-		UNTAR_BOWTIE2_INDEX([[id: file(bowtie2_index).simpleName ], file(bowtie2_index) ])
+	}
+	else if (bowtie2_index.endsWith('.tar.gz') || bowtie2_index.endsWith('.tar')) {
+		UNTAR_BOWTIE2_INDEX([[id: file(bowtie2_index).simpleName], file(bowtie2_index)])
 		ch_bowtie2_index = UNTAR_BOWTIE2_INDEX.out.untar
-	} else {
-		ch_bowtie2_index = channel.value([ [id: file(bowtie2_index).simpleName ], file(bowtie2_index) ])
+	}
+	else {
+		ch_bowtie2_index = channel.value([[id: file(bowtie2_index).simpleName], file(bowtie2_index)])
 	}
 
-	if(exclusion_peaks && exclusion_peaks.endsWith(".gz")) {
-		GUNZIP_BL_PEAKS([[id: file(exclusion_peaks).simpleName ], file(exclusion_peaks) ])
+	if (exclusion_peaks && exclusion_peaks.endsWith(".gz")) {
+		GUNZIP_BL_PEAKS([[id: file(exclusion_peaks).simpleName], file(exclusion_peaks)])
 		ch_exclusion_peaks = GUNZIP_BL_PEAKS.out.gunzip
-	} else if (exclusion_peaks) {
-		ch_exclusion_peaks = channel.value([ [id: file(exclusion_peaks).simpleName ], file(exclusion_peaks) ])
-	} else {
-		ch_exclusion_peaks = channel.value([[:],[]])
+	}
+	else if (exclusion_peaks) {
+		ch_exclusion_peaks = channel.value([[id: file(exclusion_peaks).simpleName], file(exclusion_peaks)])
+	}
+	else {
+		ch_exclusion_peaks = channel.value([[:], []])
 	}
 
-	if(!tss_bed){
+	if (!tss_bed) {
 		TSS_EXTRACT(ch_gtf)
 		ch_tss = TSS_EXTRACT.out.bed
-	} else {
-		ch_tss = channel.value([ [id: file(tss_bed).baseName.replaceFirst(/\.bed$/,"") ], file(tss_bed) ])
+	}
+	else {
+		ch_tss = channel.value([[id: file(tss_bed).baseName.replaceFirst(/\.bed$/, "")], file(tss_bed)])
 	}
 
 	emit:
-	genome_fasta       = ch_genome_fasta    // channel: [ val(meta), path(genome_fasta) ]
-	genome_fai         = ch_genome_fai      // channel: [ val(meta), path(fai) ]
-	gensz              = ch_gensz           // int or string
-	bowtie2_index      = ch_bowtie2_index   // channel: [ val(meta), path(bowtie2_index) ]
-	exclusion_peaks	   = ch_exclusion_peaks // channel: [ val(meta), path(exclusion_peaks) ]
-	gtf                = ch_gtf             // channel: [ val(meta), path(gtf) ]
-	tss                = ch_tss             // channel: [ val(meta), path(tss_bed) ]
-
-	publish:
-	ch_bowtie2_index >> (save_reference ? "genome/bowtie2" : null)
-	ch_tss           >> "genome"
+	genome_fasta    = ch_genome_fasta // channel: [ val(meta), path(genome_fasta) ]
+	genome_fai      = ch_genome_fai // channel: [ val(meta), path(fai) ]
+	gensz           = ch_gensz // int or string
+	bowtie2_index   = ch_bowtie2_index // channel: [ val(meta), path(bowtie2_index) ]
+	exclusion_peaks = ch_exclusion_peaks // channel: [ val(meta), path(exclusion_peaks) ]
+	gtf             = ch_gtf // channel: [ val(meta), path(gtf) ]
+	tss             = ch_tss // channel: [ val(meta), path(tss_bed) ]
 }

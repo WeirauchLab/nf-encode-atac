@@ -1,9 +1,9 @@
 process UCSC_TRACKHUB {
 	tag "UCSC Trackhub"
 
-	cpus   = {1 * task.attempt}
-	memory = {16.GB * task.attempt}
-	time   = {2.h * task.attempt}
+	cpus { 1 * task.attempt }
+	memory { 16.GB * task.attempt }
+	time { 2.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/pydantic_python:ef418a61c42ac2fb"
@@ -15,12 +15,12 @@ process UCSC_TRACKHUB {
 	path "data/overlap_peaks/*"
 
 	output:
-	path("data")   , includeInputs: true, optional: true, emit: data
-	path("hub.txt"), optional: true, emit: hub
+	path ("data"), includeInputs: true, optional: true, emit: data
+	path ("hub.txt"), optional: true, emit: hub
 
 	// version strings
-	tuple val(task.process), val("python")     , eval("python --version | sed 's/Python //'"), topic: versions
-	tuple val(task.process), val("trackdb.py") , eval("trackdb.py -v")                       , topic: versions
+	tuple val(task.process), val("python"), eval("python --version | sed 's/Python //'"), topic: versions
+	tuple val(task.process), val("trackdb.py"), eval("trackdb.py -v"), topic: versions
 
 	script:
 	def args = task.ext.args ?: ""
