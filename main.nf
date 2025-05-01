@@ -195,12 +195,18 @@ workflow {
 	QFILTER_PEAKS(ch_qfilter_peaks_inputs)
 	ch_qfilter_peaks_outputs = QFILTER_PEAKS.out.peak
 
-	ch_homer_peak_inputs = Channel.empty()
-	ch_homer_peak_inputs
-		.mix(ENCODE.out.idr_conservative)
-		.mix(ENCODE.out.idr_optimal)
-		.mix(ENCODE.out.overlap_conservative)
-		.mix(ENCODE.out.overlap_optimal)
+	// -------------------------
+	// HOMER
+	// -------------------------
+
+	// Select the peak files to use for HOMER based on the input parameters
+	Channel.empty()
+		.mix(
+			(params.homer_peak_inputs.contains("idr_conservative") ? ENCODE.out.idr_conservative : Channel.empty()),
+			(params.homer_peak_inputs.contains("idr_optimal") ? ENCODE.out.idr_optimal : Channel.empty()),
+			(params.homer_peak_inputs.contains("overlap_conservative") ? ENCODE.out.overlap_conservative : Channel.empty()),
+			(params.homer_peak_inputs.contains("overlap_optimal") ? ENCODE.out.overlap_optimal : Channel.empty()),
+		)
 		.set { ch_homer_peak_inputs }
 
 	HOMER(
