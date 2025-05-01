@@ -365,6 +365,25 @@
                     "type": "string",
                     "default": "-size given -nomotif",
                     "description": "Additional arguments to pass to HOMER findMotifsGenome.pl."
+                },
+                "homer_peak_inputs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "idr_optimal",
+                            "idr_conservative",
+                            "overlap_optimal",
+                            "overlap_conservative"
+                        ],
+                        "description": "Peak types to include in HOMER analyses."
+                    },
+                    "default": [
+                        "idr_optimal",
+                        "idr_conservative",
+                        "overlap_optimal",
+                        "overlap_conservative"
+                    ]
                 }
             }
         },
