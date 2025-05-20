@@ -1,0 +1,19 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    "qc.md:md5,a28502d5b3ff572bbaaac1bbc4ffc60b"
+                ],
+                "report": [
+                    "qc.md:md5,a28502d5b3ff572bbaaac1bbc4ffc60b"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.6"
+        },
+        "timestamp": "2025-05-20T12:19:30.943948819"
+    }
+}

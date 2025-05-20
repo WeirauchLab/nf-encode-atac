@@ -36,8 +36,9 @@ process MULTIQC {
 
     output:
     path "multiqc_report.html", optional: false, emit: html
-    path "*_plots"            , optional:true  , emit: plots
-    path "*_data"             , optional:true  , emit: data
+    path "*_plots", optional: true, emit: plots
+    path "*_data", optional: true, emit: data
+    path "*_data/multiqc_data.json", optional: true, emit: data_json
 
     script:
     def args = task.ext.args ?: ""
