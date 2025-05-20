@@ -226,12 +226,17 @@ Kraken2 report files. These contain the taxonomic classification information for
 ## MultiQC
 
 ```bash
-├── multiqc
-│   ├── multiqc_report.html
-│   └── multiqc_report_data
+└── multiqc
+   ├── multiqc_report.html
+   ├── multiqc_report_data
+   ├── *_summary.md
+   └── *_summary.xlsx
 ```
 
 The [MultiQC](https://multiqc.info/) report. This contains a summary of the quality control metrics for the entire pipeline.
+
+- `*_summary.md`: mediawiki-formatted summary of the report.
+- `*_summary.xlsx`: Excel-formatted summary of the report.
 
 ## Pipeline Info
 
