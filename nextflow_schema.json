@@ -539,6 +539,18 @@
                     "exists": true,
                     "description": "Path to multiqc config file.",
                     "default": "${projectDir}/assets/multiqc_config.yaml"
+                },
+                "skip_summary_rmd": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip summary RMD report generation."
+                },
+                "multiqc_summary_rmd": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Path to RMD report to use for summarizing MultiQC.",
+                    "default": "${projectDir}/assets/multiqc_summary.rmd"
                 }
             }
         },

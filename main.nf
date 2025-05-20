@@ -10,6 +10,7 @@ Modules
 include { QFILTER_PEAKS      } from "./modules/local/qfilter_peaks/main"
 include { MULTIQC            } from "./modules/local/multiqc/main"
 include { SUMMARY            } from "./modules/local/summary/main"
+include { RENDER_MULTIQC_RMD } from "./modules/local/render_multiqc_rmd/main"
 
 /*
 ----------------------------------
@@ -75,7 +76,6 @@ workflow {
 	if (params.summary_motifs && params.skip_homer_findmotifsgenome) {
 		error("ERROR: Specific motifs are highlighted in the summary with --summary-motifs, but HOMER findMotifsGenome is skipped.  You can't have both.")
 	}
-
 
 	// Validate input parameters
 	validateParameters()
@@ -274,6 +274,16 @@ workflow {
 		ch_versions.collectFile(name: "software_mqc_versions.yml", newLine: true),
 	)
 
+	summary_md = Channel.empty()
+	if (!params.skip_summary_rmd) {
+		RENDER_MULTIQC_RMD(
+			file(params.multiqc_summary_rmd),
+			MULTIQC.out.data_json,
+		)
+		summary_md = summary_md.mix(RENDER_MULTIQC_RMD.out.report)
+	}
+
+
 	SUMMARY(
 		file(params.summary_config),
 		params.summary_motifs ? file(params.summary_motifs) : [],
@@ -362,6 +372,7 @@ workflow {
 	// MultiQC
 	MULTIQC.out >> "multiqc"
 	SUMMARY.out >> "multiqc"
+	summary_md >> "multiqc"
 	ch_qfilter_peaks_outputs >> "encode/macs2/qfiltered"
 }
 

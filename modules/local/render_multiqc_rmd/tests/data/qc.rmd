@@ -1,0 +1,407 @@
+---
+title: "QC Report"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output:
+  md_document:
+    variant: mediawiki
+params:
+  wf_name: "Test Workflow"
+  wf_version: "1.0"
+  wf_url: "https://example.com/workflow"
+  wf_user: "Your Name"
+  wf_revision: "abc123"
+  nf_version: "This is a test workflow."
+  run_name: "Test Run"
+  multiqc_json: ""
+  multiqc_url: ""
+  trackhub_session_url: ""
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, error = FALSE, results = "asis")
+options(
+  knitr.kable.NA = "",
+  big.mark = ","
+)
+library(knitr)
+library(rmarkdown)
+library(tidyverse)
+library(jsonlite)
+```
+
+```{r load_data}
+
+# Load the MultiQC data
+multiqc_data <- jsonlite::fromJSON(params$multiqc_json)
+
+data_cols <-
+	list(
+	  fastqc_cols =
+      c(
+          "Sample ID" = "Sample ID",
+          "Total Seq" = "Total Sequences",
+          "Seq Length" = "Sequence length",
+          "Median Seq Length" = "median_sequence_length",
+          "Basic Stats" = "basic_statistics",
+          "Per Base Seq Quality" = "per_base_sequence_quality",
+          "Per Tile Seq Quality" = "per_tile_sequence_quality",
+          "Per Seq Quality Score" = "per_sequence_quality_scores",
+          "Per Base Seq Content" = "per_base_sequence_content",
+          "Per Seq GC Content" = "per_sequence_gc_content",
+          "Per Base N Content" = "per_base_n_content"
+      ),
+	  bowtie2 =
+	    c(
+	      "Total Reads" = "total_reads",
+	      "Paired Total" = "paired_total",
+	      "Overall Alignment Rate" = "overall_alignment_rate",
+	      "Unique Aligned" = "paired_aligned_one",
+	      "Multi Aligned" = "paired_aligned_multi"
+	    ),
+	  gen_stats =
+	    c(
+	      "Sample ID" = "Sample ID",
+        "Raw Total Seq" = "fastqc_raw-total_sequences",
+        "Adapter %" = "fastp-pct_adapter",
+        "Overall Alignment %" = "bowtie_2_hisat2-overall_alignment_rate",
+        "Total Mapped Fragments" = "samtools_flagstat-mapped_passed",
+        "Duplication %" = "sambamba_markdup-duplicate_rate",
+        "Median Insert Size" = "picard_insertsizemetrics-summed_median",
+        "TSS Enrichment" = "atacseqqc-score",
+        "NRF" = "encode_library_complexity-nrf",
+        "PBC1" = "encode_library_complexity-pbc1",
+        "PBC2" = "encode_library_complexity-pbc2",
+        "Best Species %" = "kraken-pct_top_one",
+        "Unclassified %" = "kraken-pct_unclassified",
+        "Raw GC %" = "fastqc_raw-percent_gc",
+        "Raw Median Seq Length" = "fastqc_raw-median_sequence_length",
+        "Raw FASTQC fail %" = "fastqc_raw-percent_fails",
+        "Trimmed GC %" = "fastqc_trimmed-percent_gc",
+        "Trimmed Median Seq Length" = "fastqc_trimmed-median_sequence_length",
+        "Trimmed FASTQC fail %" = "fastqc_trimmed-percent_fails",
+        "Trimmed Total Seq" = "fastqc_trimmed-total_sequences"
+	    ),
+	  tsse = 
+	    c(
+	      "Sample ID" = "Sample ID",
+	      "Score" = "score"
+	    ),
+	  homer_fmg = 
+	    c(
+	      "Sample ID" = "Sample ID",
+        "Motif Name" = "motif_name",
+        "Consensus" = "consensus",
+        #"P-value" = "p_value",
+        "log10 P-value" = "log10_p_value",
+        "Q value" = "q_value",
+        "n of target seq with motif" = "n_of_target_sequences_with_motif",
+	      "% of target seq with motif" = "pct_of_target_sequences_with_motif",
+	      "n of background seq with motif" = "n_of_background_sequences_with_motif",
+	      "% of background seq with motif" = "pct_of_background_sequences_with_motif"
+	    )
+	)
+
+mqc_to_tbl <- function(mqc,.id = "Sample ID", columns = c()){
+  df <- bind_rows(mqc,.id = .id)
+  if(length(columns)){
+    df <- dplyr::select(df,any_of(columns))
+  }
+  df
+}
+parse_fastp <- 
+  function(mqc,.id = "Sample ID"){
+    sample_ids <- names(mqc)
+    map(
+      mqc,
+      function(x){
+        lst(
+          reads_before_filtering = x$summary$before_filtering$total_reads,
+          reads_after_filtering = x$summary$after_filtering$total_reads,
+          trimmed_reads = x$adapter_cutting$adapter_trimmed_reads,
+          trimmed_bases = x$adapter_cutting$adapter_trimmed_bases
+        )
+      }
+    ) |>
+      bind_rows(.id = .id)
+  }
+
+
+
+
+mod_data <-
+  list(
+    gen_stats = 
+      {
+        mqc_to_tbl(multiqc_data$report_saved_raw_data$multiqc_general_stats,columns = data_cols$gen_stats) |>
+        dplyr::filter( str_detect(`Sample ID`,"\\sR[0-9]$",negate = T) )
+      },
+    fastqc_raw = mqc_to_tbl(multiqc_data$report_saved_raw_data$multiqc_fastqc_fastqc_raw,columns = data_cols$fastqc_cols),
+    fastqc_trimmed = mqc_to_tbl(multiqc_data$report_saved_raw_data$multiqc_fastqc_fastqc_trimmed,columns = data_cols$fastqc_cols),
+    fastp = parse_fastp(multiqc_data$report_saved_raw_data$multiqc_fastp),
+    bowtie2 = mqc_to_tbl(multiqc_data$report_saved_raw_data$multiqc_bowtie2,columns = data_cols$bowtie2),
+    idr_repro = mqc_to_tbl(multiqc_data$report_saved_raw_data$multiqc_encode_idr_reproducibility),
+    overlap_repro = mqc_to_tbl(multiqc_data$report_saved_raw_data$multiqc_encode_overlap_reproducibility),
+    tsse = mqc_to_tbl(multiqc_data$report_saved_raw_data$multiqc_tss_enrichment_score,columns = data_cols$tsse),
+    homer_fmg = mqc_to_tbl(multiqc_data$report_saved_raw_data$multiqc_homer_findmotifsgenome, columns = data_cols$homer_fmg)
+    
+  )
+#mqc_to_tbl(multiqc_data$report_saved_raw_data$)
+
+
+
+```
+
+
+```{r render_workflow_info}
+
+cat("## Run Information\n")
+
+tribble(
+	~Workflow, ~ Information,
+	"Name", params$wf_name,
+	"Version", params$wf_version,
+  "Revision", params$wf_revision,
+	"URL", params$wf_url,
+	"Nextflow Version", params$nf_version,
+	"Run Name", params$run_name,
+  "Submitted By", params$wf_user,
+	"Run Date", as.character(Sys.Date()),
+	"MultiQC", params$multiqc_url,
+	"Trackhub Session", params$trackhub_session_url
+) |>
+	kable(
+		caption = "Workflow Information",
+		col.names = c("Workflow", "Information"),
+		align = c("l", "l"),
+		table.attr = "class='wikitable sortable'"
+	)
+
+```
+
+## Highlights / Overall summary
+
+
+
+## Summary Stats
+
+The values in this table represent key metrics that are used to determine sample quality.
+These are derived from many of the tools used in the workflow and may have detailed sections.
+
+For the definition of the column, please click the "Definitions" tab.
+
+```{r gen_stats}
+
+cat(
+  "<tabber>",
+  "|-| Summary =\n"
+)
+
+mod_data$gen_stats |>
+  mutate(
+    across(
+      ends_with("%"),
+      ~ifelse(.x > 1, .x / 100, .x)
+    ),
+    across(
+      ends_with("%"),
+      ~scales::label_percent(accuracy = 0.01,big.mark = ",")(.x)
+    ),
+    across(
+      matches("(Raw|Trimmed) Total Seq|Total Mapped Fragments"),
+      ~paste(round(.x,3),"M",sep = " ")
+    )
+  ) |>
+  kable(digits = 3,caption = "General statistics")
+
+
+
+cat("\n|-| Definitions =\n")
+tribble(
+  ~Metric,~Tool,~Description,
+  "Raw Total Seq","FASTQC","Total number of sequences in the fastq file(s). If paired-end, this will be the sum of R1 and R2.",
+  "Adapter %","FASTP","Percentage of reads containing an adapter.",
+  "Overall Alignment %", "Bowtie2", "The overall alignment rate of the reads",
+  "Total Mapped Fragments", "Bowtie2", "Total number of fragments mapped to the genome.",
+  "Duplication %","Sambamba", "The percentage of aligned reads determined to be technical duplicates.",
+  "Median Insert Size","Picard","The median insert size of the fragments. This would be calculated as the beginning of R1 to the end of R2.",
+  "TSS Enrichment","ENCODE","The signal to noise ratio surrounding TSS sites.",
+  "NRF","ENCODE","Non-redundant fraction. Calculated as: total distinct reads / total reads",
+  "PBC1","ENCODE","PCR Bottlenecking coefficient 1. Calculated as:  number of genomic positions with only one read / number of distinct genomic positions",
+  "PBC2","ENCODE","PCR Bottlenecking coefficient 2. Calculated as:  number of genomic positions with only one read / number of genomic positions with exactly two reads",
+  "Best Species %", "Kraken2", "The percentage of fragments that were classified into the top genome.",
+  "Unclassified %", "Kraken2", "The percentage of fragments that were unable to be classified. Often due to short fragment size or the lack of the target genome in the database.",
+  "Raw GC%","FASTQC","The mean GC% of raw sequences.",
+  "Raw Median Seq Length", "FASTQC", "The median size of the raw sequences",
+  "Raw FASTQC fail %", "FASTQC", "The total number of FASTQC metrics that failed. Take this with a grain of salt!",
+  "Trimmed GC%","FASTQC","The mean GC% of trimmed sequences.",
+  "Trimmed Median Seq Length", "FASTQC", "The median size of the trimmed sequences",
+  "Trimmed FASTQC fail %", "FASTQC", "The total number of FASTQC metrics that failed. Take this with a grain of salt!",
+  "Trimmed Total Seq","FASTQC","Total number of sequences in the fastq file(s) after trimming."
+) |>
+  kable(caption = "Definitions for summary stats")
+
+cat("\n</tabber>\n")
+```
+
+## Peak Reproducibility
+
+The ATAC and ChIP workflows used ENCODE's reproducibility metrics.  
+For the detailed description of these metrics, please click the "Description" tab.
+
+For downstream statistical analyses, it is usually recommended to use the **overlap_conservative** peak set.
+
+<tabber>
+
+```{r, eval=nrow(mod_data$idr_repro) > 0}
+
+cat(
+  "|-| IDR =",
+  "IDR refers to Irreproducible Discovery Rate and measures consistency between replicates.",
+  "Replicates are compared in a pairwise manner and the results from the pooled replicate are transferred.",
+  ""
+)
+kable(mod_data$idr_repro,digits = 3,format.args = list(big.mark = ","))
+
+```
+
+```{r, eval=nrow(mod_data$overlap_repro) > 0}
+
+cat("|-| Overlaps =\n")
+kable(mod_data$overlap_repro,digits = 3,format.args = list(big.mark = ","))
+
+```
+
+|-| Description =
+
+The terminology for ENCODE's peak reproducibility is as follows: 
+
+### Calculation Metrics
+
+Nt
+: Best no. of peaks passing thresholds by comparing true replicates
+
+Np
+: Best no. of peaks passing thresholds by comparing pseudoreplicates
+
+Conservative
+: file containing the best peak number when comparing true replicate pairs
+
+Optimal
+: peak file with the most peaks when comparing Nt and Np
+
+Rescue Ratio
+: max(Nt, Np) / min(Nt, Np)
+
+Consistency Ratio:
+: max(Peaks) / min(Peaks)
+
+Peaks are considered passing when both the rescue and consistency ratio are < 2.
+
+Furthermore, ENCODE defines peak sets as either "conservative" or "optimal".
+
+conservative
+: Peaks derived from true replicates.
+
+optimal
+: Peaks derived from either true or pseudoreplicates.
+
+</tabber>
+
+
+```{r fastqc, eval=nrow(mod_data$fastqc_raw) > 0 | nrow(mod_data$fastqc_trimmed) > 0}
+
+cat(
+  "## FastQC\n",
+  "<tabber>\n",
+  "",
+  sep = "\n"
+)
+
+if(nrow(mod_data$fastqc_raw)){
+  cat(
+    "|-| Raw =\n",
+    "Raw represents the report generated by FASTQC prior to any processing of the reads.",
+    "",
+    sep = "\n"
+  )
+  kable(mod_data$fastqc_raw,format.args = list(big.mark = ","))
+}
+if(nrow(mod_data$fastqc_trimmed)){
+  cat(
+    "|-| Trimmed =\n",
+    "Trimmed represents the report generated by FASTQC after adapter trimming.",
+    "",
+    sep = "\n"
+  )
+  kable(mod_data$fastqc_trimmed,format.args = list(big.mark = ","))
+}
+
+cat("</tabber>\n")
+
+```
+
+```{r fastp, eval=nrow(mod_data$fastp) > 0}
+
+cat(
+  "## FASTP",
+  "[FASTP](https://github.com/OpenGene/fastp) is a FASTQ preprocessing utility used to remove low quality reads and perform adapter trimming.",
+  "",
+  sep = "\n\n"
+)
+
+mod_data$fastp |>
+  kable(format.args = list(big.mark = ","))
+
+```
+
+```{r bowtie2, eval=nrow(mod_data$bowtie2) > 0}
+
+cat("## Bowtie2 Alignments\n\n")
+
+mod_data$bowtie2 |>
+  kable(format.args = list(big.mark = ","))
+
+```
+
+```{r tsse, eval=nrow(mod_data$tsse) > 0}
+
+cat(
+  "## TSS Enrichment\n",
+  "TSS Enrichment (TSSE) is a metric created by ENCODE to estimate the signal to noise ratio surrounding TSS sites.",
+  "The calculation is performed by:\n",
+  "1. Calculating the depth of 100 bp windows surrounding the TSS. These windows extending to +/- 2,000 bp in either direction.",
+  "2. Calculating the depth of the flanking 100 bp windows on either side of this extension and taking the mean.",
+  "3. Dividing the depths from step 1 by the mean from step 2.",
+  "4. TSSE is represented by the maximum value from step 3.",
+  "",
+  sep = "\n"
+)
+
+mod_data$tsse |>
+  kable(digits = 3,caption = "TSS Enrichment Scores", format.args = list(big.mark = ","))
+
+```
+
+
+```{r homer_fmg, eval=nrow(mod_data$homer_fmg) > 0}
+
+cat(
+  "## HOMER Motif Enrichment\n",
+  "HOMER was used to scan peak regions for enriched motifs and the top result is presented in the table below.",
+  "",
+  sep = "\n"
+)
+
+mod_data$homer_fmg |>
+  mutate(
+    across(
+      matches("log10 P-value|Q value|n of target seq with motif|n of background seq with motif"),
+      as.numeric
+    )
+  ) |>
+  kable(digits = 3,caption = "Top motif hit for each peak set",format.args = list(big.mark = ","))
+
+
+```
+
