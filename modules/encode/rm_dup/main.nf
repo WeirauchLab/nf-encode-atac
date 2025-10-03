@@ -1,8 +1,8 @@
 process RM_DUPLICATES {
 	tag "${meta.id}"
-	cpus { 1 * task.attempt }
+	cpus { 6 * task.attempt }
 	memory { 16.GB * task.attempt }
-	time { 2.h * task.attempt }
+	time { 4.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464"
@@ -20,6 +20,7 @@ process RM_DUPLICATES {
 	if (meta.single_end) {
 		"""
 		samtools view \\
+			--threads ${task.cpus} \\
 			-F 1804 \\
 			-b ${bam} \\
 			> ${prefix}.bam
@@ -28,10 +29,17 @@ process RM_DUPLICATES {
 	else {
 		"""
 		samtools view \\
+			--threads ${task.cpus} \\
 			-F 1804 \\
 			-f 2 \\
 			-b ${bam} \\
 			> ${prefix}.bam
 		"""
 	}
+
+	stub:
+	def prefix = task.ext.prefix ?: "${meta.id}.nodup"
+	"""
+	touch ${prefix}.bam
+	"""
 }

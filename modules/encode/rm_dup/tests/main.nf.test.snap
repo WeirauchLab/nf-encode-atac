@@ -1,0 +1,74 @@
+{
+    "run pe successfully": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "100k_ENCFF203LSX",
+                            "single_end": false
+                        },
+                        "100k_ENCFF203LSX.nodup.bam:md5,03640fb7408af6ee4a392a8aec478213"
+                    ]
+                ],
+                "1": [
+                    [
+                        "RM_DUPLICATES",
+                        "samtools",
+                        "1.20"
+                    ]
+                ],
+                "bam": [
+                    [
+                        {
+                            "id": "100k_ENCFF203LSX",
+                            "single_end": false
+                        },
+                        "100k_ENCFF203LSX.nodup.bam:md5,03640fb7408af6ee4a392a8aec478213"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-10-03T12:48:00.465336"
+    },
+    "run se successfully": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "100k_ENCFF203LSX",
+                            "single_end": true
+                        },
+                        "100k_ENCFF203LSX.nodup.bam:md5,81a5e93606cc4929f9d5448f95d28d29"
+                    ]
+                ],
+                "1": [
+                    [
+                        "RM_DUPLICATES",
+                        "samtools",
+                        "1.20"
+                    ]
+                ],
+                "bam": [
+                    [
+                        {
+                            "id": "100k_ENCFF203LSX",
+                            "single_end": true
+                        },
+                        "100k_ENCFF203LSX.nodup.bam:md5,81a5e93606cc4929f9d5448f95d28d29"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-10-03T12:45:50.560571"
+    }
+}
