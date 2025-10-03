@@ -3,6 +3,8 @@ nextflow_process {
     name "Test Process RM_DUPLICATES"
     script "../main.nf"
     process "RM_DUPLICATES"
+    config "./test.config"
+    tag "samtools"
 
     test("run pe successfully") {
         when {
