@@ -1,0 +1,110 @@
+{
+    "ignore q threshold when empty": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "100k_ENCFF203LSX",
+                            "single_end": false
+                        },
+                        "100k_ENCFF203LSX.lowq_filt.bam:md5,78cfc7d6c0a841c0baf63e6af7de5c90"
+                    ]
+                ],
+                "1": [
+                    [
+                        "RM_LOWQ_READS",
+                        "samtools",
+                        "1.20"
+                    ]
+                ],
+                "bam": [
+                    [
+                        {
+                            "id": "100k_ENCFF203LSX",
+                            "single_end": false
+                        },
+                        "100k_ENCFF203LSX.lowq_filt.bam:md5,78cfc7d6c0a841c0baf63e6af7de5c90"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-10-03T10:41:20.471417"
+    },
+    "run pe successfully": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "100k_ENCFF203LSX",
+                            "single_end": false
+                        },
+                        "100k_ENCFF203LSX.lowq_filt.bam:md5,b389a1e5816b12aa4a2a05c6f43eeeca"
+                    ]
+                ],
+                "1": [
+                    [
+                        "RM_LOWQ_READS",
+                        "samtools",
+                        "1.20"
+                    ]
+                ],
+                "bam": [
+                    [
+                        {
+                            "id": "100k_ENCFF203LSX",
+                            "single_end": false
+                        },
+                        "100k_ENCFF203LSX.lowq_filt.bam:md5,b389a1e5816b12aa4a2a05c6f43eeeca"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-10-03T10:41:09.511034"
+    },
+    "run se successfully": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "100k_ENCFF203LSX",
+                            "single_end": true
+                        },
+                        "100k_ENCFF203LSX.lowq_filt.bam:md5,727ce095b36beed2ca2fcca21cea6a4a"
+                    ]
+                ],
+                "1": [
+                    [
+                        "RM_LOWQ_READS",
+                        "samtools",
+                        "1.20"
+                    ]
+                ],
+                "bam": [
+                    [
+                        {
+                            "id": "100k_ENCFF203LSX",
+                            "single_end": true
+                        },
+                        "100k_ENCFF203LSX.lowq_filt.bam:md5,727ce095b36beed2ca2fcca21cea6a4a"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-10-03T10:41:14.812292"
+    }
+}
