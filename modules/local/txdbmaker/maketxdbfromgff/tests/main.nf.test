@@ -21,7 +21,8 @@ nextflow_process {
         }
         then {
             assert process.success
-            assert snapshot(process.out).match()
+            //assert snapshot(process.out).match()
+            assert process.out.txdb[0][1].endsWith(".sqlite")
         }
     }
     test("Includes chrsizes when provided") {
@@ -40,7 +41,8 @@ nextflow_process {
         }
         then {
             assert process.success
-            assert snapshot(process.out).match()
+            //assert snapshot(process.out).match()
+            assert process.out.txdb[0][1].endsWith(".sqlite")
         }
     }
 

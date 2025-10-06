@@ -7,13 +7,21 @@
                         {
                             "id": "test_gtf"
                         },
-                        "test_gtf.sqlite:md5,3c83a21dd5852f6e585d4c5e7b9dadfc"
+                        "test_gtf.sqlite:md5,f30f17e61170fb1b085701bcb74309ec"
                     ]
                 ],
                 "1": [
                     [
                         "TXDBMAKER_MAKETXDBFROMGFF",
                         "versions.yaml:md5,7860ba6d890ec51d4fc0a6ba5b7fbc66"
+                    ]
+                ],
+                "txdb": [
+                    [
+                        {
+                            "id": "test_gtf"
+                        },
+                        "test_gtf.sqlite:md5,f30f17e61170fb1b085701bcb74309ec"
                     ]
                 ],
                 "versions": [
@@ -28,7 +36,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-10-06T09:30:06.157740323"
+        "timestamp": "2025-10-06T10:30:24.125793628"
     },
     "Should run without failures": {
         "content": [
@@ -38,13 +46,21 @@
                         {
                             "id": "test_gtf"
                         },
-                        "test_gtf.sqlite:md5,e199ecaa6b261bcc13a47c95dd3f15e4"
+                        "test_gtf.sqlite:md5,459b81b1411480001e9e227b58e87802"
                     ]
                 ],
                 "1": [
                     [
                         "TXDBMAKER_MAKETXDBFROMGFF",
                         "versions.yaml:md5,7860ba6d890ec51d4fc0a6ba5b7fbc66"
+                    ]
+                ],
+                "txdb": [
+                    [
+                        {
+                            "id": "test_gtf"
+                        },
+                        "test_gtf.sqlite:md5,459b81b1411480001e9e227b58e87802"
                     ]
                 ],
                 "versions": [
@@ -59,6 +75,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-10-06T09:29:53.41176201"
+        "timestamp": "2025-10-06T10:30:13.30132698"
     }
 }
