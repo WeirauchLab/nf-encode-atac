@@ -295,6 +295,7 @@ workflow {
 	// PREPARE_GENOME
 	PREPARE_GENOME.out.tss >> "genome"
 	PREPARE_GENOME.out.bowtie2_index >> "genome/bowtie2"
+	PREPARE_GENOME.out.txdb >> "genome"
 
 	// PREPARE_FASTQ
 	PREPARE_FASTQ.out.subsampled_fastq >> "fastq/subsampled"

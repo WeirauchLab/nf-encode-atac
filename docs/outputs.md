@@ -28,6 +28,18 @@ If enabled, this will save the Bowtie2 indices for the genome that were built.
 
 If TSS regions were extracted from the GTF, they will be saved here.
 
+### TxDb
+
+```bash
+├── genome
+│   └── *.sqlite
+```
+
+If a TxDb was built from the GFF/GTF, it will be saved here.
+This can be loaded into R using the `AnnotationDbi::loadDb()` function for
+downstream analyses.
+
+
 ### FASTQC
 
 ```bash

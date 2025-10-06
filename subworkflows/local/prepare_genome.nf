@@ -6,6 +6,7 @@ include { SAMTOOLS_FAIDX_CHR             } from '../../modules/local/samtools/fa
 include { BOWTIE2_BUILD                  } from '../../modules/local/bowtie2/build/main'
 include { UNTAR as UNTAR_BOWTIE2_INDEX   } from '../../modules/nf-core/untar/main'
 include { TSS_EXTRACT                    } from '../../modules/local/tss_extract/main'
+include { TXDBMAKER_MAKETXDBFROMGFF      } from '../../modules/local/txdbmaker/maketxdbfromgff/main'
 
 workflow PREPARE_GENOME {
 	take:
@@ -56,6 +57,17 @@ workflow PREPARE_GENOME {
 	}
 
 	// ----------------------------------------------------------------------- //
+	// Prepare TxDb from GFF
+	// ----------------------------------------------------------------------- //
+
+	ch_txdb = Channel.empty()
+	if(gtf) {
+		TXDBMAKER_MAKETXDBFROMGFF(ch_gtf, ch_genome_fai.map{it -> it[1]})
+		ch_txdb = TXDBMAKER_MAKETXDBFROMGFF.out.txdb
+	}
+	
+
+	// ----------------------------------------------------------------------- //
 	// Prepare bowtie2 index
 	// ----------------------------------------------------------------------- //
 
@@ -98,4 +110,5 @@ workflow PREPARE_GENOME {
 	exclusion_peaks = ch_exclusion_peaks // channel: [ val(meta), path(exclusion_peaks) ]
 	gtf             = ch_gtf // channel: [ val(meta), path(gtf) ]
 	tss             = ch_tss // channel: [ val(meta), path(tss_bed) ]
+	txdb            = ch_txdb // channel: [ val(meta), path("*.sqlite") ]
 }
