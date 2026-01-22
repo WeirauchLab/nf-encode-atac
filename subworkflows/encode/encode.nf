@@ -199,8 +199,10 @@ workflow ENCODE {
 	idr_optimal                 = TASK_REPRODUCIBILITY.out.idr_optimal
 	idr_conservative            = TASK_REPRODUCIBILITY.out.idr_conservative
 	idr_plots                   = TASK_REPRODUCIBILITY.out.idr_plots
+	idr_peaks                   = TASK_REPRODUCIBILITY.out.idr_peaks
 	overlap_optimal             = TASK_REPRODUCIBILITY.out.overlap_optimal
 	overlap_conservative        = TASK_REPRODUCIBILITY.out.overlap_conservative
+	overlap_peaks               = TASK_REPRODUCIBILITY.out.overlap_peaks
 	reproducibility_peak_counts = TASK_REPRODUCIBILITY.out.peak_counts
 	reproducibility_stats_csv   = TASK_REPRODUCIBILITY.out.stats_csv
 	reproducibility_stats_json  = TASK_REPRODUCIBILITY.out.stats_json
