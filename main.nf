@@ -234,7 +234,14 @@ workflow {
 		.set { ch_reproducibility_peaks_branched }
 
 
-	Channel.topic('versions')
+
+	channel.of(
+		["WORKFLOW: ${workflow.manifest.name}","version", "${workflow.manifest.version}"],
+		["WORKFLOW: ${workflow.manifest.name}","revision", "${workflow.revision ?: 'no revision'}"],
+		["WORKFLOW: ${workflow.manifest.name}","commit", "${workflow.commitId ?: 'no commit ID'}"],
+		["NEXTFLOW", "nextflow", nextflow.version]
+	)
+		.mix(Channel.topic('versions'))
 		.unique()
 		.map { process, name, version -> [process, "  ${name}: \"${version}\""] }
 		.groupTuple(by: 0)
@@ -282,7 +289,6 @@ workflow {
 		)
 		summary_md = summary_md.mix(RENDER_MULTIQC_RMD.out.report)
 	}
-
 
 	SUMMARY(
 		file(params.summary_config),
