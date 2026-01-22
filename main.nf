@@ -236,9 +236,9 @@ workflow {
 
 
 	channel.of(
-		["WORKFLOW: ${workflow.manifest.name}","version", "${workflow.manifest.version}"],
-		["WORKFLOW: ${workflow.manifest.name}","revision", "${workflow.revision ?: 'no revision'}"],
-		["WORKFLOW: ${workflow.manifest.name}","commit", "${workflow.commitId ?: 'no commit ID'}"],
+		["${workflow.manifest.name} (WORKFLOW)","version", "${workflow.manifest.version}"],
+		["${workflow.manifest.name} (WORKFLOW)","revision", "${workflow.revision ?: 'no revision'}"],
+		["${workflow.manifest.name} (WORKFLOW)","commit", "${workflow.commitId ?: 'no commit ID'}"],
 		["NEXTFLOW", "nextflow", nextflow.version]
 	)
 		.mix(Channel.topic('versions'))
