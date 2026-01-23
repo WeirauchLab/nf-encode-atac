@@ -1,8 +1,8 @@
 process RM_LOWQ_READS {
 	tag "${meta.id}"
-	cpus { 1 * task.attempt }
+	cpus { 4 * task.attempt }
 	memory { 16.GB * task.attempt }
-	time { 2.h * task.attempt }
+	time { 4.h * task.attempt }
 
 	conda "${moduleDir}/environment.yml"
 	container "community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464"
@@ -27,7 +27,8 @@ process RM_LOWQ_READS {
 		| samtools sort \\
 			/dev/stdin \\
 			-o ${prefix}.bam \\
-			-T tmp_${prefix}
+			-T tmp_${prefix} \\
+			--threads ${task.cpus - 1}
 		"""
 	}
 	else {
@@ -39,15 +40,21 @@ process RM_LOWQ_READS {
 			-u ${bam} \\
 		| samtools sort \\
 			-n \\
+			--threads ${task.cpus - 1} \\
 		| samtools fixmate \\
-			-r - - \\
-		| samtools view \\
+			-r - tmp_fixmate_${prefix}.bam
+		
+		samtools view \\
 			-F 1804 \\
 			-f 2 \\
 			-u \\
+			tmp_fixmate_${prefix}.bam \\
 		| samtools sort \\
 			-o ${prefix}.bam \\
-			-T tmp_${prefix}
+			-T tmp_${prefix} \\
+			--threads ${task.cpus - 1}
+		
+		rm tmp_*
 		"""
 	}
 }
