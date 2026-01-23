@@ -5,3 +5,7 @@ __pycache__
 .nf-test*
 assets/test_data/.nextflow*
 assets/test_data/work
+
+# ignore pixi for now
+pixi.lock
+pixi.toml
