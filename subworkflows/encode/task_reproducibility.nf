@@ -2,22 +2,6 @@ include { IDR_PEAKS              } from '../../modules/encode/idr/main'
 include { OVERLAP_PEAKS          } from '../../modules/encode/overlap/main'
 include { ENCODE_REPRODUCIBILITY } from '../../modules/encode/reproducibility/main'
 
-//def generateCombinationPairs(list) {
-//	def combos = []
-//	for (i in 0..<list.size()) {
-//		for (j in i+1..<list.size()) {
-//			combos.add([list[i], list[j]])
-//		}
-//	}
-//	return combos
-//}
-
-def generateCombinationPairs(list) {
-	def combos = [list, list].combinations()
-	combos = combos.findAll { it[0] < it[1] }
-	return combos
-}
-
 workflow TASK_REPRODUCIBILITY {
 	take:
 	ch_peaks          // [ val(meta), path(peaks) ]
@@ -27,9 +11,9 @@ workflow TASK_REPRODUCIBILITY {
 	skip_overlap
 
 	main:
-
+	
 	ch_peaks
-		.branch { meta, peak ->
+		.branch { meta, _peak ->
 			sample: meta.sample_type == "sample" && !meta.pr_rep
 			sample_pr1: meta.sample_type == "pr" && meta.pr_rep == "pr1"
 			sample_pr2: meta.sample_type == "pr" && meta.pr_rep == "pr2"
@@ -39,6 +23,7 @@ workflow TASK_REPRODUCIBILITY {
 		}
 		.set { ch_peaks_branched }
 
+	// Sample-level PR1 vs PR2
 	ch_peaks_branched.sample
 		.map { meta, peak -> [meta.sample_id, meta, peak] }
 		.join(
@@ -49,13 +34,15 @@ workflow TASK_REPRODUCIBILITY {
 			ch_peaks_branched.sample_pr2.map { meta, peak -> [meta.sample_id, peak] },
 			by: 0
 		)
-		.map { key, meta, peak1, peak2, peak3 ->
+		.map { _key, meta, peak1, peak2, peak3 ->
 			def new_meta = meta.clone()
 			new_meta.id = "${meta.id}_pr1-vs-pr2"
 			new_meta.peak_comparison_group = "sample"
 			[new_meta, peak1, peak2, peak3]
 		}
 		.set { ch_peak_sample_pr1_v_pr2 }
+
+	// Pooled-level PR1 vs PR2
 
 	ch_peaks_branched.pooled
 		.map { meta, peak -> [meta.group, meta, peak] }
@@ -67,7 +54,7 @@ workflow TASK_REPRODUCIBILITY {
 			ch_peaks_branched.pooled_pr2.map { meta, peak -> [meta.group, peak] },
 			by: 0
 		)
-		.map { key, meta, peak1, peak2, peak3 ->
+		.map { _key, meta, peak1, peak2, peak3 ->
 			def new_meta = meta.clone()
 			new_meta.id = "${meta.group}_pr1-vs-pr2"
 			new_meta.peak_comparison_group = "np"
@@ -75,29 +62,39 @@ workflow TASK_REPRODUCIBILITY {
 		}
 		.set { ch_peak_pooled_pr1_v_pr2 }
 
+	// Pooled vs Sample comparisons combinations
+	// For each group, generate all pairwise combinations of sample peaks
+	def group_sample_peak_sets = ch_peaks_branched.sample
+		.map{meta, peak -> [meta.subMap("group"), [meta.id, peak] ]}
+		.groupTuple(by: 0)
+		.flatMap{meta, peak_list ->
+			def peak_list_sorted = peak_list.sort{it[0]}
+			def combinations = []
+			peak_list_sorted.each{ id_1, peak_1 ->
+				peak_list_sorted.each{ id_2, peak_2 ->
+					if (id_1 < id_2) {
+						def combo_meta = meta + [peak1: id_1, peak2: id_2]
+						combinations << [combo_meta, peak_1, peak_2]
+					}
+				}
+			}
+			combinations
+		}
+	
+	// Combine pooled peaks with the sample peak combinations
 	ch_peaks_branched.pooled
-		.map { meta, peak ->
-			[generateCombinationPairs(meta.sample_id.sort()), meta, peak]
-		}
-		.transpose(by: 0)
-		.map { peak_pair, meta, peak ->
-			def new_meta = meta.clone()
+		.map{meta, peak -> [meta.group, meta, peak] }
+		.combine(
+			group_sample_peak_sets.map{meta, peak1, peak2 -> [meta.group, meta, peak1, peak2]},
+			by: 0
+		)
+		.map{ _key, pooled_meta, pooled_peak, sample_meta, sample_peak1, sample_peak2 ->
+			def new_id = "${pooled_meta.group}_${sample_meta.peak1}-vs-${sample_meta.peak2}"
+			def new_meta = pooled_meta + sample_meta
 			new_meta.peak_comparison_group = "nt"
-			new_meta.peak1 = peak_pair[0]
-			new_meta.peak2 = peak_pair[1]
-			new_meta.id = "${new_meta.group}_${new_meta.peak1}-vs-${new_meta.peak2}"
-			[peak_pair[0], peak_pair[1], new_meta, peak]
+			new_meta.id = new_id
+			[new_meta, pooled_peak, sample_peak1, sample_peak2]
 		}
-		.join(
-			ch_peaks_branched.sample.map { meta, peak -> [meta.sample_id, peak] },
-			by: 0
-		)
-		.map { rep1, rep2, meta, peak, peak1 -> [rep2, meta, peak, peak1] }
-		.join(
-			ch_peaks_branched.sample.map { meta, peak -> [meta.sample_id, peak] },
-			by: 0
-		)
-		.map { rep2, meta, peak, peak1, peak2 -> [meta, peak, peak1, peak2] }
 		.set { ch_peak_pooled_v_sample }
 
 	Channel.empty()
@@ -178,7 +175,7 @@ workflow TASK_REPRODUCIBILITY {
 
 	ch_optimal
 		.mix(ch_conservative)
-		.branch { meta, peak ->
+		.branch { meta, _peak ->
 			idr_optimal: meta.reproducibility_mode == "idr" && meta.reproducibility_class == "optimal"
 			idr_conservative: meta.reproducibility_mode == "idr" && meta.reproducibility_class == "conservative"
 			overlap_optimal: meta.reproducibility_mode == "overlap" && meta.reproducibility_class == "optimal"
