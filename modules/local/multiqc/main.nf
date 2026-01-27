@@ -2,6 +2,10 @@ process MULTIQC {
     tag "multiqc_report"
     cache false
 
+    cpus { 1 * task.attempt }
+    memory { 16.GB * task.attempt }
+    time { 3.h * task.attempt }
+
     conda "${moduleDir}/environment.yml"
     container "community.wave.seqera.io/library/multiqc:1.25--9968ff4994a2e2d7"
 
