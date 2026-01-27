@@ -8,7 +8,7 @@ process ENCODE_REPRODUCIBILITY {
 	container "community.wave.seqera.io/library/python:3.12.3--827621ec7ad46bfc"
 
 	input:
-	tuple val(meta), path(nt_peaks), path(np_peaks), path(rep_peaks)
+	tuple val(meta), path("Nt/*"), path("Np/*"), path("Peaks/*")
 
 	output:
 	tuple val(meta), path("*_peak_counts.csv"), optional: true, emit: peak_counts_csv
@@ -19,17 +19,14 @@ process ENCODE_REPRODUCIBILITY {
 	tuple val(task.process), val("python"), eval("python --version | sed 's/Python //'"), topic: versions
 
 	script:
-	def nt_arg = nt_peaks ? "--Nt ${nt_peaks}" : ""
-	def np_arg = np_peaks ? "--Np ${np_peaks}" : ""
-	def rep_arg = rep_peaks ? "--peaks ${rep_peaks}" : ""
 	def mode_arg = meta.reproducibility_mode ? "--mode ${meta.reproducibility_mode}" : ""
 	def sample_arg = meta.group ? "--sample ${meta.group}" : ""
 	"""
 	reproducibility_stats.py \\
 		${mode_arg} \\
 		${sample_arg} \\
-		${nt_arg} \\
-		${np_arg} \\
-		${rep_arg}
+		--Nt Nt \\
+		--Np Np \\
+		--peaks Peaks
 	"""
 }

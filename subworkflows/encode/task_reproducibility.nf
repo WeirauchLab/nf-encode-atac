@@ -140,6 +140,7 @@ workflow TASK_REPRODUCIBILITY {
 		.mix(ch_overlap_peaks)
 		.map { meta, peaks ->
 			def new_meta = meta.subMap("group", "single-end", "reproducibility_mode")
+			new_meta.id = "${new_meta.group}_${new_meta.reproducibility_mode}"
 			[new_meta, [meta.peak_comparison_group, peaks]]
 		}
 		.groupTuple(by: 0)
