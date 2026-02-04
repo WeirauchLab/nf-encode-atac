@@ -17,7 +17,7 @@ process CONSENSUS_PEAKS {
 	tuple val(meta), path("*.txt"), optional: true, emit: sessinfo
 
 	script:
-	def prefix = task.ext.prefix ?: "${meta.id}_consensus"
+	def prefix = task.ext.prefix ?: "${meta.id}"
 	def args = task.ext.args ?: ""
 	"""
 	consensus_peaks.R \\
