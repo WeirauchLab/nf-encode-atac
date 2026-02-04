@@ -7,6 +7,7 @@ from spp_xcorr import SppXCorr
 from encode_libqc import EncodeLibQC
 from encode_peakstats import EncodePeakStats
 from atacseqqc_stats import AtacSeqQC
+from consensus_peaks import ConsensusPeaks
 from seqkit import SeqKit
 
 parser = argparse.ArgumentParser()
@@ -38,6 +39,9 @@ multiqc.report.modules.append(Homer())
 
 # ATACseqQC
 multiqc.report.modules.append(AtacSeqQC())
+
+# Consensus Peaks
+multiqc.report.modules.append(ConsensusPeaks())
 
 
 # Write the report

@@ -11,6 +11,7 @@ include { QFILTER_PEAKS      } from "./modules/local/qfilter_peaks/main"
 include { MULTIQC            } from "./modules/local/multiqc/main"
 include { SUMMARY            } from "./modules/local/summary/main"
 include { RENDER_MULTIQC_RMD } from "./modules/local/render_multiqc_rmd/main"
+include { CONSENSUS_PEAKS    } from "./modules/local/consensus_peaks/main"
 
 /*
 ----------------------------------
@@ -168,6 +169,42 @@ workflow {
 		params.skip_collectinsertsizemetrics,
 	)
 
+	// -------------------------
+	// consensus peaks
+	// -------------------------
+
+	(ch_peaks_filtered_sample, ch_peaks_filtered_pooled) = ENCODE.out.peaks_filtered
+		.branch { meta, peak ->
+			sample: meta.sample_type == "sample"
+				[meta.subMap("group"), peak]
+			pooled: meta.sample_type == "pooled" && !meta.pr_rep
+				[meta.subMap("group"), peak]
+		}
+	ch_consensus_input = ch_peaks_filtered_pooled
+		.combine(ch_peaks_filtered_sample, by: 0)
+		.groupTuple(by: [0, 1])
+		.map { meta, pooled_peaks, sample_peaks ->
+			def new_meta = [id: meta.group] + meta
+			[new_meta, pooled_peaks, sample_peaks]
+		}
+		.filter{_meta, _pooled_peaks, sample_peaks -> sample_peaks.size() > 1 }
+
+	ch_consensus_peaks = Channel.empty()
+	ch_consensus_sessinfo = Channel.empty()
+	ch_consensus_json = Channel.empty()
+	ch_consensus_csv = Channel.empty()
+	if (!params.skip_consensus_peaks) {
+		CONSENSUS_PEAKS(ch_consensus_input)
+		ch_consensus_peaks = CONSENSUS_PEAKS.out.peaks
+		ch_consensus_json = CONSENSUS_PEAKS.out.json
+		ch_consensus_csv = CONSENSUS_PEAKS.out.matrix_csv
+		ch_consensus_sessinfo = CONSENSUS_PEAKS.out.sessinfo
+	}
+
+	// -------------------------
+	// DEEPTOOLS
+	// -------------------------
+
 	DEEPTOOLS(
 		ENCODE.out.bam_filtered,
 		ENCODE.out.bam_filtered_index,
@@ -278,6 +315,7 @@ workflow {
 		DEEPTOOLS.out.fingerprint_counts.collect { it[1] }.ifEmpty { [] },
 		HOMER.out.findMotifsGenome_tsv.collect { it[1] }.ifEmpty { [] },
 		HOMER.out.annotatePeaks_annStats.collect { it[1] }.ifEmpty { [] },
+		ch_consensus_json.collect { it[1] }.ifEmpty { [] },
 		ch_versions.collectFile(name: "software_mqc_versions.yml", newLine: true),
 	)
 
@@ -359,6 +397,12 @@ workflow {
 	METAGENOMICS.out.sourmash_sketch >> "metagenomics/sourmash"
 	METAGENOMICS.out.sourmash_gather_csv >> "metagenomics/sourmash"
 	METAGENOMICS.out.kraken2_report >> "metagenomics/kraken2"
+
+	// CONSENSUS PEAKS
+	ch_consensus_peaks >> "encode/macs2/consensus_peaks"
+	ch_consensus_json >> "encode/macs2/consensus_peaks"
+	ch_consensus_csv >> "encode/macs2/consensus_peaks"
+	ch_consensus_sessinfo >> "encode/macs2/consensus_peaks"
 
 	// DEEPTOOLS
 	DEEPTOOLS.out.bigwig >> "deeptools/bamcoverage"

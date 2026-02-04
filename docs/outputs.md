@@ -127,6 +127,28 @@ These can be found in the following directory: `encode/macs2/qfiltered`.
 
 The file pattern for these is: `qfilt-<THRESHOLD>_*`
 
+#### Consensus Peaks
+
+Consensus peaks across replicates are saved in the following directory: `encode/macs2/consensus_peaks`.
+**This is not part of ENCODE's original outputs**.
+
+To generate these peaks, the following steps are performed:
+1. For each group with multiple replicates, the pooled replicate peaks are used as the "master" peak set.
+2. Each replicate's peaks are overlapped with the pooled peaks. If there is at least 1 overlap for a peak that passes thresholds, it is given a score of 1 for that replicate.
+3. The score column of the bed file is updated to reflect the number of replicates that overlap each pooled peak.
+
+**IMPORTANT:** The output peak file represents the full set of pooled peaks, with an updated score column. There is no filtering performed!
+This is subject to change, but the idea is that users can apply their own thresholds based on the number of replicates they want to require overlap in.
+
+The output files are named as follows:
+
+`*_consensus.(bed|narrowPeak|broadPeak)`: The consensus peaks for the group.
+`*_consensus.json`: A JSON file that contains summary information about the consensus peaks.
+`*_consensus_sessinfo.txt`: A session info file that contains information about the software versions used to generate the peaks.
+`*_consensus.csv`: A CSV that contains expanded information about the consensus peaks, including the matrix of per-replicate overlaps.
+
+Where `*` is the group name.
+
 ### SPP
 
 ```bash
