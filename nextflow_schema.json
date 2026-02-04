@@ -502,6 +502,23 @@
                 }
             }
         },
+        "peak_options": {
+            "title": "Peak Options",
+            "type": "object",
+            "description": "Options for peak processing.",
+            "properties": {
+                "skip_consensus_peaks": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip consensus peak calling."
+                },
+                "consensus_peaks_args": {
+                    "type": "string",
+                    "default": "--fracA 0.5 --fracB 0.5 --saveMatrix --saveSessionInfo --summaryJson",
+                    "description": "Additional arguments to pass to consensus peak calling R script."
+                }
+            }
+        },
         "deeptools_options": {
             "title": "DeepTools options",
             "type": "object",

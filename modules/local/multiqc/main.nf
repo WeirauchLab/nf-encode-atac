@@ -36,6 +36,7 @@ process MULTIQC {
     path "data/deeptools/plotFingerprint/raw_counts/*"
     path "data/homer/findMotifsGenome/*"
     path "data/homer/annStats/*"
+    path "data/consensus_peaks/*"
     path "data/*"
 
     output:
