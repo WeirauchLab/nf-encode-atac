@@ -7,7 +7,7 @@ process MULTIQC {
     time { 3.h * task.attempt }
 
     conda "${moduleDir}/environment.yml"
-    container "community.wave.seqera.io/library/multiqc:1.25--9968ff4994a2e2d7"
+    container "community.wave.seqera.io/library/multiqc:1.33--ee7739d47738383b"
 
     input:
     path multiqc_config
