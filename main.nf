@@ -273,10 +273,8 @@ workflow {
 
 
 	channel.of(
-		["${workflow.manifest.name} (WORKFLOW)","version", "${workflow.manifest.version}"],
-		["${workflow.manifest.name} (WORKFLOW)","revision", "${workflow.revision ?: 'no revision'}"],
-		["${workflow.manifest.name} (WORKFLOW)","commit", "${workflow.commitId ?: 'no commit ID'}"],
-		["NEXTFLOW", "nextflow", nextflow.version]
+		["workflow", "nextflow", nextflow.version],
+		["workflow", "nf-encode-atac", "${workflow.manifest.version}-${workflow.revision} (${workflow.commitId})"]
 	)
 		.mix(Channel.topic('versions'))
 		.unique()
