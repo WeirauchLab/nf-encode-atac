@@ -117,14 +117,36 @@ def get_encode_peak_stats(peakset, filename):
     if not filename.exists():
         return pd.DataFrame(
             index=["Group"],
-            columns=[f"{peakset} Cons # Peaks", f"{peakset} Opt # Peaks"]
+            columns=[
+                f"{peakset} Cons # Peaks",
+                f"{peakset} Opt # Peaks",
+                f"{peakset} Cons Reps",
+                f"{peakset} Opt Reps"
+            ]
         )
     df = pd.read_table(
         filename,
         index_col='Sample',
         usecols=('Sample','Nt','Np')
     ).rename_axis(index='Group')
-    return df.assign(optimal=df.max(axis=1)).rename(columns={'Nt': f"{peakset} Cons # Peaks", 'optimal': f"{peakset} Opt # Peaks"}).drop(columns='Np')
+    df = df.assign(optimal=df.max(axis=1)
+        ).rename(columns={
+            'Nt': f"{peakset} Cons # Peaks",
+            'optimal': f"{peakset} Opt # Peaks",
+        }).drop(columns='Np')
+    return df.merge(
+        pd.read_table(
+            filename,
+            index_col='Sample',
+            usecols=('Sample', 'Conservative Peaks', 'Optimal Peaks')
+        ).rename_axis(index='Group'
+        ).rename(columns={
+            'Conservative Peaks': f"{peakset} Cons Reps",
+            'Optimal Peaks': f"{peakset} Opt Reps",
+        }),
+        left_index=True,
+        right_index=True
+    )
 
 def find_key_motifs(homer_dir, motifs_of_interest):
     for group in motifs_of_interest.keys():
