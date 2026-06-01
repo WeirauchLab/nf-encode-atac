@@ -12,6 +12,17 @@ Please be sure you cite ENCODE's ATAC-seq pipeline if you use this pipeline:
 
 - [ENCODE-DCC/atac-seq-pipeline:2.0.0](https://github.com/ENCODE-DCC/atac-seq-pipeline2/tree/v2.0.0)
 
+Additionally, a select set of nf-core modules are used in this pipeline. Please be sure to cite these as well:
+
+- [nf-core](https://pubmed.ncbi.nlm.nih.gov/32055031/)
+
+> Ewels PA, Peltzer A, Fillinger S, Patel H, Alneberg J, Wilm A, Garcia MU, Di Tommaso P, Nahnsen S. The nf-core framework for community-curated bioinformatics pipelines. Nat Biotechnol. 2020 Mar;38(3):276-278. doi: 10.1038/s41587-020-0439-x. PubMed PMID: 32055031.
+
+- [Nextflow](https://pubmed.ncbi.nlm.nih.gov/28398311/)
+
+> Di Tommaso P, Chatzou M, Floden EW, Barja PP, Palumbo E, Notredame C. Nextflow enables reproducible computational workflows. Nat Biotechnol. 2017 Apr 11;35(4):316-319. doi: 10.1038/nbt.3820. PubMed PMID: 28398311.
+
+
 ## Quick Start
 
 ### Prerequisites

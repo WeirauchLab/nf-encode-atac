@@ -13,6 +13,14 @@ Luo, Yunhai, Benjamin C Hitz, Idan Gabdank, Jason A Hilton, Meenakshi S Kagda, B
 
 Hitz, Benjamin C., Jin-Wook Lee, Otto Jolanki, Meenakshi S. Kagda, Keenan Graham, Paul Sud, Idan Gabdank, et al. 2023. “The ENCODE Uniform Analysis Pipelines.” http://dx.doi.org/10.1101/2023.04.04.535623.
 
+## [nf-core](https://pubmed.ncbi.nlm.nih.gov/32055031/)
+
+> Ewels PA, Peltzer A, Fillinger S, Patel H, Alneberg J, Wilm A, Garcia MU, Di Tommaso P, Nahnsen S. The nf-core framework for community-curated bioinformatics pipelines. Nat Biotechnol. 2020 Mar;38(3):276-278. doi: 10.1038/s41587-020-0439-x. PubMed PMID: 32055031.
+
+## [Nextflow](https://pubmed.ncbi.nlm.nih.gov/28398311/)
+
+> Di Tommaso P, Chatzou M, Floden EW, Barja PP, Palumbo E, Notredame C. Nextflow enables reproducible computational workflows. Nat Biotechnol. 2017 Apr 11;35(4):316-319. doi: 10.1038/nbt.3820. PubMed PMID: 28398311.
+
 ## Tools
 
 ### Bedtools
