@@ -1,6 +1,8 @@
 # NF-ENCODE-ATAC
 
-This is a nextflow-based pipeline designed to process ATAC-seq data based on
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20671979.svg)](https://doi.org/10.5281/zenodo.20671979)
+
+This is a Nextflow-based pipeline designed to process ATAC-seq data based on
 the ENCODE's ATAC-seq pipeline. It attempts to replicate the commands
 that would normally be processed by ENCODE, but in a Nextflow-native format.
 
@@ -8,9 +10,15 @@ Please see the later section for more details.
 
 ## Citation / Credits
 
-Please be sure you cite ENCODE's ATAC-seq pipeline if you use this pipeline:
+> VonHandorf, A. & Dexheimer, P. (2026). WeirauchLab/nf-encode-atac (cell-genom-2026). Zenodo. https://doi.org/10.5281/zenodo.20671979
 
-- [ENCODE-DCC/atac-seq-pipeline:2.0.0](https://github.com/ENCODE-DCC/atac-seq-pipeline2/tree/v2.0.0)
+Please be sure you also cite ENCODE's ATAC-seq pipeline if you use this pipeline ([ref](https://github.com/ENCODE-DCC/atac-seq-pipeline/issues/219#issuecomment-589256101)):
+
+- [ENCODE-DCC/atac-seq-pipeline](https://github.com/ENCODE-DCC/atac-seq-pipeline)
+
+> ENCODE Project Consortium (2012). An integrated encyclopedia of DNA elements in the human genome. Nature, 489(7414), 57–74. https://doi.org/10.1038/nature11247
+>
+> ENCODE-DCC/atac-seq-pipeline [Computer software]. ([2017](https://github.com/ENCODE-DCC/atac-seq-pipeline/commit/3a0daa33d42c293b498f9adbfdb815a75ef2e2b9)). Retrieved from https://github.com/ENCODE-DCC/atac-seq-pipeline
 
 Additionally, a select set of nf-core modules are used in this pipeline. Please be sure to cite these as well:
 
@@ -204,8 +212,21 @@ These features include:
 
 ### Where can I find more information?
 
-Check the documentation folder! This contains:
+Check the [`docs`](docs) folder! This contains:
 
 - rehash of the quickstart
 - description of outputs
 - comparison of commands between ENCODE and Nextflow
+
+## Contributors and License
+
+<!--
+| Contributor             | Role
+|-------------------------|-----------------
+| XXXXXX XXXXXXXXXX, PhD  | Author
+| XXXXXXX XXXXXXXXX, PhD  | Contributor
+-->
+
+See [#64](https://github.com/WeirauchLab/nf-encode-atac/issues/64) for licensing information.
+
+© 2026, Cincinnati Children's Hospital and contributors.
